@@ -1,0 +1,7 @@
+Place InDetVertexTruthMatchUtils.cxx in InnerDetector/InDetValidation/InDetTruthVertexValidation/Root/.
+
+Place VertexAnalysis.cxx in VertexAnalysis/Root/, where the relevant line is L412.
+
+Running this creates a folder called TrackAssociation filled with info in the form "Vtx z // d0 z0 phi eta pOverq truVtxX truVtxY truVtxZ" for each track, with one file for each event.
+
+Use the python file to draw all the tracks.

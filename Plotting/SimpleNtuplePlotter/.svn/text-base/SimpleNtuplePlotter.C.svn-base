@@ -1,0 +1,2869 @@
+#include <SimpleNtuplePlotter.h>
+
+// Wishlist
+// Fix MC path setting and allow samples to be set in main function
+// Fix replacing TH1 memory leak
+// Fix MC weighting, used in PRWPlots() - figure out how to extract sumWeightedEvents without looping over events
+
+//-----------------------------------------------------------------------------------------------------
+// Old Functions
+//-----------------------------------------------------------------------------------------------------
+
+/*void LostWZPlots() {
+
+    // Options
+
+    MCPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/SherpaWZ/WithLepMatching/";
+    saveDirectory = "/afs/cern.ch/user/m/mazhang/Plots/LostWZ3/";
+    saveImage = true;
+
+    DefineSampleGroups();
+    DefineWeightsAndRegions();
+    SetTree("outputTree");
+
+    // Create plots
+    
+    TCut noMatch = "matchedRecoLeptonIndex==-1 && truthLepton_pdgID!=15";
+    TCut pTReq = "truthLepton_pT>20";
+    TCut etaReq = "(fabs(truthLepton_eta)<2.47 && truthLepton_pdgID==11) || (fabs(truthLepton_eta)<2.4 && truthLepton_pdgID==13)";
+
+    TCut relaxedVRS1 = trigger + mllMin45 + lepReq5025 + jetReq + OSSF + ZWindow + "MET<300 && HTincl>300" + dPhiJetMET;
+
+    AddGroup(SherpaWZ);
+    AddPlot("truthLepton_phi", relaxedVRS1+noMatch, "Truth Phi of Lost Lepton in Relaxed VRS1", 20, -5, 5);
+    AddPlot("truthLepton_eta", relaxedVRS1+noMatch+"truthLepton_pdgID==11", "Truth Eta of Lost Electrons in Relaxed VRS1", 50, -5, 5);
+    AddPlot("truthLepton_eta", relaxedVRS1+noMatch+"truthLepton_pdgID==13", "Truth Eta of Lost Muons in Relaxed VRS1", 50, -5, 5);
+    Plot();
+
+    AddGroup(SherpaWZ);
+    AddPlot("lep_n", VRS1, "WZ Reco Lepton Number", 5, 0, 5);
+    AddPlot("matchedRecoLeptonIndex", VRS1, "WZ Truth Lepton Matching to Reco", 6, -2, 4);
+    AddPlot("matchedRecoLeptonIndex!=-1", VRS1, "Truth Lepton Matched to Reco", 2, 0, 2);
+    AddPlot("matchedTruthLeptonIndex", VRS1, "WZ Reco Lepton Matching to Truth", 6, -2, 4);
+    AddPlot("matchedTruthLeptonIndex!=-1", VRS1, "Reco Lepton Matched to Truth", 2, 0, 2);
+    AddPlot("truthLepton_n", VRS1, "WZ Truth Lepton Number", 5, 0, 5);
+    AddPlot("truthLepton_pdgID", VRS1+noMatch, "Truth pdgID of Lost Lepton", 20, 0, 20);
+    AddPlot("truthLepton_eta", VRS1+noMatch, "Truth Eta of Lost Lepton", 20, -5, 5);
+    AddPlot("truthLepton_phi", VRS1+noMatch, "Truth Phi of Lost Lepton", 20, -5, 5);
+    AddPlot("truthLepton_pT", VRS1+noMatch, "Truth pT of Lost Lepton", 20, 0, 200);
+    AddPlot("truthLepton_pdgID", VRS1+noMatch+pTReq, "Truth pdgID of Lost Lepton with pT Requirement", 20, 0, 20);
+    AddPlot("truthLepton_pdgID", VRS1+noMatch+pTReq+etaReq, "Truth pdgID of Lost Lepton with pT and Eta Requirements", 20, 0, 20);
+    AddPlot("truthLepton_eta", VRS1+noMatch+pTReq+etaReq, "Truth Eta of Lost Lepton with pT and Eta Requirements", 20, -5, 5);
+    AddPlot("truthLepton_phi", VRS1+noMatch+pTReq+etaReq, "Truth Phi of Lost Lepton with pT and Eta Requirements", 20, -5, 5);
+    AddPlot("truthLepton_pT", VRS1+noMatch+pTReq+etaReq, "Truth pT of Lost Lepton with pT and Eta Requirements", 20, 0, 200);
+    AddPlot("truthLepton_eta", VRS1+noMatch+pTReq+etaReq+"truthLepton_pdgID==11", "Truth Eta of Lost Electrons with pT and Eta Requirements", 20, -5, 5);
+    AddPlot("truthLepton_eta", VRS1+noMatch+pTReq+etaReq+"truthLepton_pdgID==13", "Truth Eta of Lost Muons with pT and Eta Requirements", 20, -5, 5);
+    AddPlot("truthLepton_eta", noMatch+"truthLepton_pdgID==11", "Truth Eta of Lost Electrons, No Selections", 200, -5, 5);
+    AddPlot("truthLepton_eta", noMatch+"truthLepton_pdgID==13", "Truth Eta of Lost Muons, No Selections", 200, -5, 5);
+    Plot();
+
+    AddGroup(SherpaWZ);
+    AddPlot("lep_n", VRS1+"Wflav==11 && Zflav==11", "(e, ee)", 10, 0, 10);
+    AddPlot("lep_n", VRS1+"Wflav==11 && Zflav==13", "(e, mm)", 10, 0, 10);
+    AddPlot("lep_n", VRS1+"Wflav==11 && Zflav==15", "(e, tt)", 10, 0, 10);
+    AddPlot("lep_n", VRS1+"Wflav==13 && Zflav==11", "(m, ee)", 10, 0, 10);
+    AddPlot("lep_n", VRS1+"Wflav==13 && Zflav==13", "(m, mm)", 10, 0, 10);
+    AddPlot("lep_n", VRS1+"Wflav==13 && Zflav==15", "(m, tt)", 10, 0, 10);
+    AddPlot("lep_n", VRS1+"Wflav==15 && Zflav==11", "(t, ee)", 10, 0, 10);
+    AddPlot("lep_n", VRS1+"Wflav==15 && Zflav==13", "(t, mm)", 10, 0, 10);
+    AddPlot("lep_n", VRS1+"Wflav==15 && Zflav==15", "(t, tt)", 10, 0, 10);
+    StackPlots("WZ Reco Lepton Number in VRS1, Divided by Flavor");
+
+    AddGroup(SherpaWZ);
+    AddPlot("truthLepton_n", VRS1+"Wflav==11 && Zflav==11", "(e, ee)", 10, 0, 10);
+    AddPlot("truthLepton_n", VRS1+"Wflav==11 && Zflav==13", "(e, mm)", 10, 0, 10);
+    AddPlot("truthLepton_n", VRS1+"Wflav==11 && Zflav==15", "(e, tt)", 10, 0, 10);
+    AddPlot("truthLepton_n", VRS1+"Wflav==13 && Zflav==11", "(m, ee)", 10, 0, 10);
+    AddPlot("truthLepton_n", VRS1+"Wflav==13 && Zflav==13", "(m, mm)", 10, 0, 10);
+    AddPlot("truthLepton_n", VRS1+"Wflav==13 && Zflav==15", "(m, tt)", 10, 0, 10);
+    AddPlot("truthLepton_n", VRS1+"Wflav==15 && Zflav==11", "(t, ee)", 10, 0, 10);
+    AddPlot("truthLepton_n", VRS1+"Wflav==15 && Zflav==13", "(t, mm)", 10, 0, 10);
+    AddPlot("truthLepton_n", VRS1+"Wflav==15 && Zflav==15", "(t, tt)", 10, 0, 10);
+    StackPlots("WZ Truth Lepton Number in VRS1, Divided by Flavor");
+
+    AddGroup(SherpaWZ);
+    AddPlot("lep_n", SRZ1+"Wflav==11 && Zflav==11", "(e, ee)", 10, 0, 10);
+    AddPlot("lep_n", SRZ1+"Wflav==11 && Zflav==13", "(e, mm)", 10, 0, 10);
+    AddPlot("lep_n", SRZ1+"Wflav==11 && Zflav==15", "(e, tt)", 10, 0, 10);
+    AddPlot("lep_n", SRZ1+"Wflav==13 && Zflav==11", "(m, ee)", 10, 0, 10);
+    AddPlot("lep_n", SRZ1+"Wflav==13 && Zflav==13", "(m, mm)", 10, 0, 10);
+    AddPlot("lep_n", SRZ1+"Wflav==13 && Zflav==15", "(m, tt)", 10, 0, 10);
+    AddPlot("lep_n", SRZ1+"Wflav==15 && Zflav==11", "(t, ee)", 10, 0, 10);
+    AddPlot("lep_n", SRZ1+"Wflav==15 && Zflav==13", "(t, mm)", 10, 0, 10);
+    AddPlot("lep_n", SRZ1+"Wflav==15 && Zflav==15", "(t, tt)", 10, 0, 10);
+    StackPlots("WZ Reco Lepton Number in SRZ1, Divided by Flavor");
+
+    AddGroup(SherpaWZ);
+    AddPlot("truthLepton_n", SRZ1+"Wflav==11 && Zflav==11", "(e, ee)", 10, 0, 10);
+    AddPlot("truthLepton_n", SRZ1+"Wflav==11 && Zflav==13", "(e, mm)", 10, 0, 10);
+    AddPlot("truthLepton_n", SRZ1+"Wflav==11 && Zflav==15", "(e, tt)", 10, 0, 10);
+    AddPlot("truthLepton_n", SRZ1+"Wflav==13 && Zflav==11", "(m, ee)", 10, 0, 10);
+    AddPlot("truthLepton_n", SRZ1+"Wflav==13 && Zflav==13", "(m, mm)", 10, 0, 10);
+    AddPlot("truthLepton_n", SRZ1+"Wflav==13 && Zflav==15", "(m, tt)", 10, 0, 10);
+    AddPlot("truthLepton_n", SRZ1+"Wflav==15 && Zflav==11", "(t, ee)", 10, 0, 10);
+    AddPlot("truthLepton_n", SRZ1+"Wflav==15 && Zflav==13", "(t, mm)", 10, 0, 10);
+    AddPlot("truthLepton_n", SRZ1+"Wflav==15 && Zflav==15", "(t, tt)", 10, 0, 10);
+    StackPlots("WZ Truth Lepton Number in SRZ, Divided by Flavor");
+}*/
+
+/*void MT2Plots() {
+
+    // Options
+
+    MCPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/MT2/";
+    dataPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/MT2/";
+    saveDirectory = "/afs/cern.ch/user/m/mazhang/Plots/MT2Final/";
+    saveImage = true;
+    blinded = false;
+
+    DefineSampleGroups();
+    DefineWeightsAndRegions();
+
+    // Create plots
+    
+    Group g_372462 ("(1200, 500)");
+    Group g_372466 ("(1400, 100)");
+    Group g_372498 ("(1000, 800)");
+    Group g_410000_407012 ("410000_407012");
+    g_372462.AddSample("372462");
+    g_372466.AddSample("372466");
+    g_372498.AddSample("372498");
+    g_410000_407012.AddSample("410000_407012");
+
+    AddGroup(g_410000_407012);
+    AddPlot("MT2Top", TCut("MT2Top>0") * MCWeight, "MT2Top Distribution for Extended ttbar", 50, 0, 1000);
+    Plot(false);
+
+    AddGroup(g_410000_407012);
+    AddPlot("MT2Top", TCut("MET>250 && MT2Top>0") * MCWeight, "MT2Top Distribution when MET>250 for Extended ttbar", 50, 0, 1000);
+    Plot(false);
+
+    AddGroup(g_410000_407012);
+    AddPlot("MT2Top", (EdgeSRMed + "mll<100 && MT2Top>0") * MCWeight, "MT2Top Distribution in SR-Medium with mll<100 for Extended ttbar", 50, 0, 1000);
+    Plot(false);
+
+    //AddGroup(ttbar);
+    //AddGroup(g_372498);
+    //AddGroup(g_372462);
+    //AddGroup(g_372466);
+    //AddData();
+    //AddPlot("MT2W", (EdgeSRMed + "mll<100 && MT2W>0") * MCWeight, "MT2W Distribution in SR-Medium with mll<100", 20, 0, 300);
+    //SetDataWeight(EdgeSRMed + "mll<100 && MT2W>0");
+    //Plot(false);
+
+    //AddGroup(ttbar);
+    //AddGroup(g_372498);
+    //AddData();
+    //AddPlot("MT2W", (EdgeSRMed + "mll<100 && MT2W>0") * MCWeight, "MT2W Distribution in SR-Medium with mll<100 (Stacked)", 20, 0, 300);
+    //SetDataWeight(EdgeSRMed + "mll<100 && MT2W>0");
+    //Plot(true);
+
+    //AddGroup(ttbar);
+    //AddGroup(g_372498);
+    //AddGroup(g_372462);
+    //AddGroup(g_372466);
+    //AddPlot("MT2Top", (EdgeSRMed + "mll<100 && MT2Top>0") * MCWeight, "MT2Top Distribution in SR-Medium with mll<100", 20, 0, 1000);
+    //Plot(false);
+
+    //AddGroup(ttbar);
+    //AddGroup(g_372498);
+    //AddData();
+    //AddPlot("MT2Top", (EdgeSRMed + "mll<100 && MT2Top>0") * MCWeight, "MT2Top Distribution in SR-Medium with mll<100 (Stacked)", 20, 0, 1000);
+    //SetDataWeight(EdgeSRMed + "mll<100 && MT2Top>0");
+    //Plot(true);
+}*/
+
+/*void MC15abPlots() {
+
+    // Options
+
+    MCPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/MC15ab/";
+    dataPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/MC15ab/";
+    saveDirectory = "/afs/cern.ch/user/m/mazhang/Plots/MC15Compare/";
+    saveImage = true;
+    blinded = false;
+
+    DefineSampleGroups();
+    DefineWeightsAndRegions();
+
+    // Create plots
+    
+    Group g_361063_a ("361063_MC15a");
+    Group g_361063_b ("361063_MC15b");
+    g_361063_a.AddSample("361063_a");
+    g_361063_b.AddSample("361063_b");
+
+    AddGroup(g_361063_a);
+    AddGroup(g_361063_b);
+    AddPlot("nVtx", "", "nVtx", 50, 0, 50);
+    Plot(false);
+
+    AddGroup(g_361063_a);
+    AddGroup(g_361063_b);
+    AddPlot("HT", "", "HT", 20, 0, 100);
+    Plot(false);
+
+    AddGroup(g_361063_a);
+    AddGroup(g_361063_b);
+    AddPlot("MET", "", "MET", 20, 0, 100);
+    Plot(false);
+
+    AddGroup(g_361063_a);
+    AddGroup(g_361063_b);
+    AddPlot("jet_n", "", "jet_n", 5, 0, 5);
+    Plot(false);
+}*/
+
+/*void DibosonSystematicsRatioPrePlots() {
+
+    // Options
+
+    MCPath = "/afs/cern.ch/work/m/mazhang/Data/WeightedSyst_v00-17/MC15b/";
+    dataPath = "";
+    saveDirectory = "/afs/cern.ch/user/m/mazhang/Plots/DibosonSystematicsRatiosB/";
+    saveImage = true;
+    saveExtension = "root";
+    blinded = false;
+
+    DefineSampleGroups();
+    DefineWeightsAndRegions();
+
+    // Create plots
+    
+    vector<TCut> regionCut = {EdgeSRLow, EdgeSRMed, EdgeSRHigh};
+    TCut newWeight = "3.2*weight1fb*trigweight_noemusf_fix";
+
+    for (int cutn=0; cutn<3; cutn++) {
+
+        //Checkpoint
+        cout<<"New Region"<<endl;
+
+        TCut thisRegion = regionCut[cutn];
+
+        //Group SherpaVVSF = SherpaVV;
+        //SherpaVVSF.SetCustomWeight((thisRegion + "(channel==0 || channel==1)") * newWeight);
+        //SherpaVVSF.SetName("Sherpa VV SF");
+        //Group SherpaVVDF = SherpaVV;
+        //SherpaVVDF.SetCustomWeight((thisRegion + "(channel==2 || channel==3)") * newWeight);
+        //SherpaVVDF.SetName("Sherpa VV DF");
+
+        SetTree("outputTree");
+        //Checkpoint
+        cout<<treeName;
+        AddGroup(SherpaVV);
+        AddPlot("mll", thisRegion * newWeight, treeName+"_VV", 50, 0, 1000);
+        Plot(true);
+        AddGroup(SherpaWZ);
+        AddPlot("mll", thisRegion * newWeight, treeName+"_WZ", 50, 0, 1000);
+        Plot(true);
+        AddGroup(rareTop);
+        AddPlot("mll", thisRegion * newWeight, treeName+"_RT", 50, 0, 1000);
+        Plot(true);
+
+        vector<TString> trees = {"EG_RESOLUTION_ALL", "EL_EFF_ID_TotalCorrUncertainty", "EL_EFF_Iso_TotalCorrUncertainty", "EL_EFF_Reco_TotalCorrUncertainty", "EL_EFF_Trigger_TotalCorrUncertainty", "JET_GroupedNP_1", "JET_GroupedNP_2", "JET_GroupedNP_3", "MUONS_ID", "MUONS_MS", "MUONS_SCALE", "MUON_EFF_STAT", "MUON_EFF_STAT_LOWPT", "MUON_EFF_SYS", "MUON_EFF_SYS_LOWPT", "MUON_EFF_TrigStatUncertainty", "MUON_EFF_TrigSystUncertainty", "MUON_ISO_STAT", "MUON_ISO_SYS"};
+
+        for (int i=0; i<trees.size(); i++) {
+
+            TString treeName = "outputTree_" + trees[i] + "__1up";
+            //Checkpoint
+            cout<<treeName;
+            SetTree(treeName);
+            AddGroup(SherpaVV);
+            AddPlot("mll", thisRegion * newWeight, treeName+"_VV", 50, 0, 1000);
+            Plot(true);
+            AddGroup(SherpaWZ);
+            AddPlot("mll", thisRegion * newWeight, treeName+"_WZ", 50, 0, 1000);
+            Plot(true);
+            AddGroup(rareTop);
+            AddPlot("mll", thisRegion * newWeight, treeName+"_RT", 50, 0, 1000);
+            Plot(true);
+
+            treeName = "outputTree_" + trees[i] + "__1down";
+            //Checkpoint
+            cout<<treeName;
+            SetTree(treeName);
+            AddGroup(SherpaVV);
+            AddPlot("mll", thisRegion * newWeight, treeName+"_VV", 50, 0, 1000);
+            Plot(true);
+            AddGroup(SherpaWZ);
+            AddPlot("mll", thisRegion * newWeight, treeName+"_WZ", 50, 0, 1000);
+            Plot(true);
+            AddGroup(rareTop);
+            AddPlot("mll", thisRegion * newWeight, treeName+"_RT", 50, 0, 1000);
+            Plot(true);
+        }
+
+        SetTree("outputTree_JET_JER_SINGLE_NP__1up");
+        //Checkpoint
+        cout<<treeName;
+        AddGroup(SherpaVV);
+        AddPlot("mll", thisRegion * newWeight, treeName+"_VV", 50, 0, 1000);
+        Plot(true);
+        AddGroup(SherpaWZ);
+        AddPlot("mll", thisRegion * newWeight, treeName+"_WZ", 50, 0, 1000);
+        Plot(true);
+        AddGroup(rareTop);
+        AddPlot("mll", thisRegion * newWeight, treeName+"_RT", 50, 0, 1000);
+        Plot(true);
+
+        SetTree("outputTree_MET_SoftTrk_ResoPara");
+        //Checkpoint
+        cout<<treeName;
+        AddGroup(SherpaVV);
+        AddPlot("mll", thisRegion * newWeight, treeName+"_VV", 50, 0, 1000);
+        Plot(true);
+        AddGroup(SherpaWZ);
+        AddPlot("mll", thisRegion * newWeight, treeName+"_WZ", 50, 0, 1000);
+        Plot(true);
+        AddGroup(rareTop);
+        AddPlot("mll", thisRegion * newWeight, treeName+"_RT", 50, 0, 1000);
+        Plot(true);
+
+        SetTree("outputTree_MET_SoftTrk_ResoPerp");
+        //Checkpoint
+        cout<<treeName;
+        AddGroup(SherpaVV);
+        AddPlot("mll", thisRegion * newWeight, treeName+"_VV", 50, 0, 1000);
+        Plot(true);
+        AddGroup(SherpaWZ);
+        AddPlot("mll", thisRegion * newWeight, treeName+"_WZ", 50, 0, 1000);
+        Plot(true);
+        AddGroup(rareTop);
+        AddPlot("mll", thisRegion * newWeight, treeName+"_RT", 50, 0, 1000);
+        Plot(true);
+
+        SetTree("outputTree_MET_SoftTrk_ScaleDown");
+        //Checkpoint
+        cout<<treeName;
+        AddGroup(SherpaVV);
+        AddPlot("mll", thisRegion * newWeight, treeName+"_VV", 50, 0, 1000);
+        Plot(true);
+        AddGroup(SherpaWZ);
+        AddPlot("mll", thisRegion * newWeight, treeName+"_WZ", 50, 0, 1000);
+        Plot(true);
+        AddGroup(rareTop);
+        AddPlot("mll", thisRegion * newWeight, treeName+"_RT", 50, 0, 1000);
+        Plot(true);
+
+        SetTree("outputTree_MET_SoftTrk_ScaleUp");
+        //Checkpoint
+        cout<<treeName;
+        AddGroup(SherpaVV);
+        AddPlot("mll", thisRegion * newWeight, treeName+"_VV", 50, 0, 1000);
+        Plot(true);
+        AddGroup(SherpaWZ);
+        AddPlot("mll", thisRegion * newWeight, treeName+"_WZ", 50, 0, 1000);
+        Plot(true);
+        AddGroup(rareTop);
+        AddPlot("mll", thisRegion * newWeight, treeName+"_RT", 50, 0, 1000);
+        Plot(true);
+    }
+}*/
+
+/*void DibosonSystematicsRatioPlots() {
+
+    // Options
+
+    MCPath = "/afs/cern.ch/user/m/mazhang/Plots/DibosonSystematicsRatiosB/";
+    saveDirectory = "/afs/cern.ch/user/m/mazhang/Plots/DibosonSystematicsRatiosCompleteB/";
+    blinded = false;
+
+    // Create plots
+
+    vector<string> files = {"outputTree_EG_RESOLUTION_ALL__1down_RT.root"
+        ,"outputTree_EG_RESOLUTION_ALL__1down_VV.root"
+        ,"outputTree_EG_RESOLUTION_ALL__1down_WZ.root"
+        ,"outputTree_EG_RESOLUTION_ALL__1up_RT.root"
+        ,"outputTree_EG_RESOLUTION_ALL__1up_VV.root"
+        ,"outputTree_EG_RESOLUTION_ALL__1up_WZ.root"
+        ,"outputTree_EL_EFF_ID_TotalCorrUncertainty__1down_RT.root"
+        ,"outputTree_EL_EFF_ID_TotalCorrUncertainty__1down_VV.root"
+        ,"outputTree_EL_EFF_ID_TotalCorrUncertainty__1down_WZ.root"
+        ,"outputTree_EL_EFF_ID_TotalCorrUncertainty__1up_RT.root"
+        ,"outputTree_EL_EFF_ID_TotalCorrUncertainty__1up_VV.root"
+        ,"outputTree_EL_EFF_ID_TotalCorrUncertainty__1up_WZ.root"
+        ,"outputTree_EL_EFF_Iso_TotalCorrUncertainty__1down_RT.root"
+        ,"outputTree_EL_EFF_Iso_TotalCorrUncertainty__1down_VV.root"
+        ,"outputTree_EL_EFF_Iso_TotalCorrUncertainty__1down_WZ.root"
+        ,"outputTree_EL_EFF_Iso_TotalCorrUncertainty__1up_RT.root"
+        ,"outputTree_EL_EFF_Iso_TotalCorrUncertainty__1up_VV.root"
+        ,"outputTree_EL_EFF_Iso_TotalCorrUncertainty__1up_WZ.root"
+        ,"outputTree_EL_EFF_Reco_TotalCorrUncertainty__1down_RT.root"
+        ,"outputTree_EL_EFF_Reco_TotalCorrUncertainty__1down_VV.root"
+        ,"outputTree_EL_EFF_Reco_TotalCorrUncertainty__1down_WZ.root"
+        ,"outputTree_EL_EFF_Reco_TotalCorrUncertainty__1up_RT.root"
+        ,"outputTree_EL_EFF_Reco_TotalCorrUncertainty__1up_VV.root"
+        ,"outputTree_EL_EFF_Reco_TotalCorrUncertainty__1up_WZ.root"
+        ,"outputTree_EL_EFF_Trigger_TotalCorrUncertainty__1down_RT.root"
+        ,"outputTree_EL_EFF_Trigger_TotalCorrUncertainty__1down_VV.root"
+        ,"outputTree_EL_EFF_Trigger_TotalCorrUncertainty__1down_WZ.root"
+        ,"outputTree_EL_EFF_Trigger_TotalCorrUncertainty__1up_RT.root"
+        ,"outputTree_EL_EFF_Trigger_TotalCorrUncertainty__1up_VV.root"
+        ,"outputTree_EL_EFF_Trigger_TotalCorrUncertainty__1up_WZ.root"
+        ,"outputTree_JET_GroupedNP_1__1down_RT.root"
+        ,"outputTree_JET_GroupedNP_1__1down_VV.root"
+        ,"outputTree_JET_GroupedNP_1__1down_WZ.root"
+        ,"outputTree_JET_GroupedNP_1__1up_RT.root"
+        ,"outputTree_JET_GroupedNP_1__1up_VV.root"
+        ,"outputTree_JET_GroupedNP_1__1up_WZ.root"
+        ,"outputTree_JET_GroupedNP_2__1down_RT.root"
+        ,"outputTree_JET_GroupedNP_2__1down_VV.root"
+        ,"outputTree_JET_GroupedNP_2__1down_WZ.root"
+        ,"outputTree_JET_GroupedNP_2__1up_RT.root"
+        ,"outputTree_JET_GroupedNP_2__1up_VV.root"
+        ,"outputTree_JET_GroupedNP_2__1up_WZ.root"
+        ,"outputTree_JET_GroupedNP_3__1down_RT.root"
+        ,"outputTree_JET_GroupedNP_3__1down_VV.root"
+        ,"outputTree_JET_GroupedNP_3__1down_WZ.root"
+        ,"outputTree_JET_GroupedNP_3__1up_RT.root"
+        ,"outputTree_JET_GroupedNP_3__1up_VV.root"
+        ,"outputTree_JET_GroupedNP_3__1up_WZ.root"
+        ,"outputTree_JET_JER_SINGLE_NP__1up_RT.root"
+        ,"outputTree_JET_JER_SINGLE_NP__1up_VV.root"
+        ,"outputTree_JET_JER_SINGLE_NP__1up_WZ.root"
+        ,"outputTree_MET_SoftTrk_ResoPara_RT.root"
+        ,"outputTree_MET_SoftTrk_ResoPara_VV.root"
+        ,"outputTree_MET_SoftTrk_ResoPara_WZ.root"
+        ,"outputTree_MET_SoftTrk_ResoPerp_RT.root"
+        ,"outputTree_MET_SoftTrk_ResoPerp_VV.root"
+        ,"outputTree_MET_SoftTrk_ResoPerp_WZ.root"
+        ,"outputTree_MET_SoftTrk_ScaleDown_RT.root"
+        ,"outputTree_MET_SoftTrk_ScaleDown_VV.root"
+        ,"outputTree_MET_SoftTrk_ScaleDown_WZ.root"
+        ,"outputTree_MET_SoftTrk_ScaleUp_RT.root"
+        ,"outputTree_MET_SoftTrk_ScaleUp_VV.root"
+        ,"outputTree_MET_SoftTrk_ScaleUp_WZ.root"
+        ,"outputTree_MUON_EFF_STAT__1down_RT.root"
+        ,"outputTree_MUON_EFF_STAT__1down_VV.root"
+        ,"outputTree_MUON_EFF_STAT__1down_WZ.root"
+        ,"outputTree_MUON_EFF_STAT__1up_RT.root"
+        ,"outputTree_MUON_EFF_STAT__1up_VV.root"
+        ,"outputTree_MUON_EFF_STAT__1up_WZ.root"
+        ,"outputTree_MUON_EFF_STAT_LOWPT__1down_RT.root"
+        ,"outputTree_MUON_EFF_STAT_LOWPT__1down_VV.root"
+        ,"outputTree_MUON_EFF_STAT_LOWPT__1down_WZ.root"
+        ,"outputTree_MUON_EFF_STAT_LOWPT__1up_RT.root"
+        ,"outputTree_MUON_EFF_STAT_LOWPT__1up_VV.root"
+        ,"outputTree_MUON_EFF_STAT_LOWPT__1up_WZ.root"
+        ,"outputTree_MUON_EFF_SYS__1down_RT.root"
+        ,"outputTree_MUON_EFF_SYS__1down_VV.root"
+        ,"outputTree_MUON_EFF_SYS__1down_WZ.root"
+        ,"outputTree_MUON_EFF_SYS__1up_RT.root"
+        ,"outputTree_MUON_EFF_SYS__1up_VV.root"
+        ,"outputTree_MUON_EFF_SYS__1up_WZ.root"
+        ,"outputTree_MUON_EFF_SYS_LOWPT__1down_RT.root"
+        ,"outputTree_MUON_EFF_SYS_LOWPT__1down_VV.root"
+        ,"outputTree_MUON_EFF_SYS_LOWPT__1down_WZ.root"
+        ,"outputTree_MUON_EFF_SYS_LOWPT__1up_RT.root"
+        ,"outputTree_MUON_EFF_SYS_LOWPT__1up_VV.root"
+        ,"outputTree_MUON_EFF_SYS_LOWPT__1up_WZ.root"
+        ,"outputTree_MUON_EFF_TrigStatUncertainty__1down_RT.root"
+        ,"outputTree_MUON_EFF_TrigStatUncertainty__1down_VV.root"
+        ,"outputTree_MUON_EFF_TrigStatUncertainty__1down_WZ.root"
+        ,"outputTree_MUON_EFF_TrigStatUncertainty__1up_RT.root"
+        ,"outputTree_MUON_EFF_TrigStatUncertainty__1up_VV.root"
+        ,"outputTree_MUON_EFF_TrigStatUncertainty__1up_WZ.root"
+        ,"outputTree_MUON_EFF_TrigSystUncertainty__1down_RT.root"
+        ,"outputTree_MUON_EFF_TrigSystUncertainty__1down_VV.root"
+        ,"outputTree_MUON_EFF_TrigSystUncertainty__1down_WZ.root"
+        ,"outputTree_MUON_EFF_TrigSystUncertainty__1up_RT.root"
+        ,"outputTree_MUON_EFF_TrigSystUncertainty__1up_VV.root"
+        ,"outputTree_MUON_EFF_TrigSystUncertainty__1up_WZ.root"
+        ,"outputTree_MUON_ISO_STAT__1down_RT.root"
+        ,"outputTree_MUON_ISO_STAT__1down_VV.root"
+        ,"outputTree_MUON_ISO_STAT__1down_WZ.root"
+        ,"outputTree_MUON_ISO_STAT__1up_RT.root"
+        ,"outputTree_MUON_ISO_STAT__1up_VV.root"
+        ,"outputTree_MUON_ISO_STAT__1up_WZ.root"
+        ,"outputTree_MUON_ISO_SYS__1down_RT.root"
+        ,"outputTree_MUON_ISO_SYS__1down_VV.root"
+        ,"outputTree_MUON_ISO_SYS__1down_WZ.root"
+        ,"outputTree_MUON_ISO_SYS__1up_RT.root"
+        ,"outputTree_MUON_ISO_SYS__1up_VV.root"
+        ,"outputTree_MUON_ISO_SYS__1up_WZ.root"
+        ,"outputTree_MUONS_ID__1down_RT.root"
+        ,"outputTree_MUONS_ID__1down_VV.root"
+        ,"outputTree_MUONS_ID__1down_WZ.root"
+        ,"outputTree_MUONS_ID__1up_RT.root"
+        ,"outputTree_MUONS_ID__1up_VV.root"
+        ,"outputTree_MUONS_ID__1up_WZ.root"
+        ,"outputTree_MUONS_MS__1down_RT.root"
+        ,"outputTree_MUONS_MS__1down_VV.root"
+        ,"outputTree_MUONS_MS__1down_WZ.root"
+        ,"outputTree_MUONS_MS__1up_RT.root"
+        ,"outputTree_MUONS_MS__1up_VV.root"
+        ,"outputTree_MUONS_MS__1up_WZ.root"
+        ,"outputTree_MUONS_SCALE__1down_RT.root"
+        ,"outputTree_MUONS_SCALE__1down_VV.root"
+        ,"outputTree_MUONS_SCALE__1down_WZ.root"
+        ,"outputTree_MUONS_SCALE__1up_RT.root"
+        ,"outputTree_MUONS_SCALE__1up_VV.root"
+        ,"outputTree_MUONS_SCALE__1up_WZ.root"
+    };
+
+    for (auto fileName:files) {
+        TFile *compareFile;
+        if (fileName.find("_RT")!=std::string::npos)
+            compareFile = new TFile(MCPath+"outputTree_RT.root");
+        else if (fileName.find("_VV")!=std::string::npos)
+            compareFile = new TFile(MCPath+"outputTree_VV.root");
+        else if (fileName.find("_WZ")!=std::string::npos)
+            compareFile = new TFile(MCPath+"outputTree_WZ.root");
+        TFile *file = new TFile(MCPath+TString(fileName));
+
+        TH1F *numHist = (TH1F*)file->Get("hist");
+        TH1F *denomHist = (TH1F*)compareFile->Get("hist");
+        numHist->Divide(denomHist);
+        for (int i=1; i<=numHist->GetNbinsX(); i++)
+            numHist->SetBinError(i,0.01);
+        numHist->SetMinimum(0.5);
+        numHist->SetMaximum(1.5);
+
+        Mkdir(saveDirectory);
+        TFile *newFile = new TFile(saveDirectory+TString(fileName), "recreate");
+        numHist->SetDirectory(newFile);
+        numHist->Write("hist");
+        //TCanvas *canvas = new TCanvas("canvas","",696,472);
+        //canvas->Print(saveDirectory+imageName);
+    }
+}*/
+
+/*void SignalContaminationPlots(int luminosity) {
+
+    // Options
+
+    MCPath = "/afs/cern.ch/work/m/mazhang/Data/v21/";
+    saveDirectory = "/afs/cern.ch/user/m/mazhang/Plots/SignalContamination/";
+    saveImage = true;
+    blinded = false;
+
+    SetTree("outputTree");
+    SetSaveExtension("eps");
+    DefineSampleGroups();
+    DefineWeightsAndRegions();
+
+    // Create plots
+
+    //TCut newWeight = "3.2*weight1fb*trigweight_noemusf_fix";
+    TCut newWeight = TCut(TString(to_string(luminosity/1000.)+"*weight1fb*trigweight"));
+
+    Group FSBackground = ttbar;
+    FSBackground.SetName("Background");
+    FSBackground.AddSample("410015"); //Wt
+    FSBackground.AddSample("410016"); //Wt
+    FSBackground.AddSample("410064"); //Wt
+    FSBackground.AddSample("410065"); //Wt
+    for (int i=361420; i<=361443; i++)
+        FSBackground.AddSample(to_string(i)); //Ztt
+    for (int i=361484; i<=361491; i++)
+        FSBackground.AddSample(to_string(i)); //Ztt low mass
+    FSBackground.AddSample("361077"); //WW
+
+    //for (int signal=370000; signal<=372599; signal++) { // Contains on-Z samples
+        //if (signal==370046) signal=372446;
+        
+    //for (int signal=372446; signal<=372599; signal++) { // EDGE only
+        //if (signal==372587) continue;
+
+    // 372512-SLN_400_300, 372513-SLN_400_320, 372514-SLN_400_340, 372588-Z_400_320
+	
+    //vector<int> signals = {372512, 372513, 372514, 372588};
+	//vector<string> sampleNames = {"SLN_400_300", "SLN_400_320", "SLN_400_340", "Z_400_320"};
+    vector<int> signals = {372502, 372462, 372466};
+	vector<string> sampleNames = {"SLN_1000_840", "SLN_1200_500", "SLN_1400_100"};
+    for (int i=0; i<signals.size(); i++) {
+        int signal = signals[i];
+        string sampleName = sampleNames[i];
+        Group g_signal (to_string(signal));
+        //g_signal.AddSample(to_string(signal));
+        
+        g_signal.AddSample(signal);
+        g_signal.SetName(sampleName);
+
+        AddGroup(FSBackground);
+        AddGroup(g_signal);
+
+        AddPlot("mll", EdgeCRTLow * newWeight, "mll of signal (" + sampleName + ") and background in EDGE CRT Low", 50, 0, 1000);
+        AddPlot("mll", EdgeCRTMed * newWeight, "mll of signal (" + sampleName + ") and background in EDGE CRT Med", 50, 0, 1000);
+        AddPlot("mll", EdgeCRTHigh * newWeight, "mll of signal (" + sampleName + ") and background in EDGE CRT High", 50, 0, 1000);
+        AddPlot("mll", EdgeVRTLow * newWeight, "mll of signal (" + sampleName + ") and background in EDGE VRT Low", 50, 0, 1000);
+        AddPlot("mll", EdgeVRTMed * newWeight, "mll of signal (" + sampleName + ") and background in EDGE VRT Med", 50, 0, 1000);
+        AddPlot("mll", EdgeVRTHigh * newWeight, "mll of signal (" + sampleName + ") and background in EDGE VRT High", 50, 0, 1000);
+        Plot();
+    }
+}*/
+
+/*void CMSRegionNormalizationCheck() { //This prints out the Z yield in both VRLow and the CMS region. The ratio between these two numbers allows me to change the normalization in Jon's plotting framework.
+
+    // Options
+
+    //MCPath = "/afs/cern.ch/work/t/tholmes/ZMETSamples/Current_Ntuples/v00-20-NoSys/MC/";
+    MCPath = "/afs/cern.ch/work/t/tholmes/ZMETSamples/Current_Ntuples/v00-20-NoSys/MC/";
+    dataPath = "";
+    saveDirectory = "/afs/cern.ch/user/m/mazhang/Plots/NormCheck/";
+    saveImage = false;
+    blinded = false;
+
+    DefineSampleGroups();
+    DefineWeightsAndRegions();
+
+    // Create plots
+    
+    TCut newWeight = "3.2*weight1fb";
+    TCut CMSRegion = "(channel==0 || channel==1) && ((jet_n>=2 && MET>150) || (jet_n>=3 && MET>100))";
+
+    AddGroup(Zee);
+    SetTree("outputTree");
+    AddPlot("mll", CMSRegion * newWeight, treeName, 50, 0, 1000);
+    AddPlot("mll", EdgeVRLow * newWeight, treeName, 50, 0, 1000);
+    Plot(true);
+}*/
+
+/*void TrueMETPlots() {
+
+    // Options
+
+    //MCPath = "/afs/cern.ch/work/t/tholmes/ZMETSamples/Current_Ntuples/v00-20-NoSys/MC/";
+    MCPath = "/afs/cern.ch/work/t/tholmes/ZMETSamples/Current_Ntuples/v00-20-NoSys/MC/";
+    dataPath = "";
+    saveDirectory = "/afs/cern.ch/user/m/mazhang/Plots/TrueMET/";
+    saveImage = true;
+    blinded = false;
+
+    DefineSampleGroups();
+    DefineWeightsAndRegions();
+
+    // Create plots
+    
+    TCut newWeight = "3.2*weight1fb*trigweight";
+
+    vector<TCut> regionCut = {EdgeSRLow, EdgeSRMed, EdgeSRHigh, EdgeVRLow, EdgeVRMed, EdgeVRHigh};
+    vector<TString> regionName = {"SRLow", "SRMed", "SRHigh", "VRLow", "VRMed", "VRHigh"};
+
+    Group PowhegZee("Powheg Zee");
+    Group PowhegZmm("Powheg Zmm");
+    Group PowhegZtt("Powheg Ztt");
+    PowhegZee.AddSample(361106);
+    PowhegZmm.AddSample(361107);
+    PowhegZtt.AddSample(361108);
+
+    for (int i=0; i<regionCut.size(); i++) {
+        AddGroup(Zee);
+        AddGroup(Zmm);
+        AddGroup(Ztt);
+        SetTree("outputTree");
+        AddPlot("truthMET", regionCut[i] * newWeight, "Sherpa "+regionName[i], 20, 0, 200);
+        Plot(true);
+
+        //AddGroup(PowhegZee);
+        //AddGroup(PowhegZmm);
+        //AddGroup(PowhegZtt);
+        //SetTree("outputTree");
+        //AddPlot("truthMET", regionCut[i] * newWeight, "Powheg "+regionName[i], 20, 0, 200);
+        //Plot(true);
+    }
+}*/
+
+/*void SingleVsDileptonTriggerPlots() {
+
+    // Options
+
+    MCPath = "/afs/cern.ch/work/t/tholmes/ZMETSamples/Current_Ntuples/v00-20-NoSys/MC/";
+    dataPath = "/afs/cern.ch/work/t/tholmes/ZMETSamples/Current_Ntuples/v00-20-NoSys/Data/";
+    saveDirectory = "/afs/cern.ch/user/m/mazhang/Plots/SingleDileptonTrigger/";
+    saveImage = true;
+    blinded = false;
+
+    DefineSampleGroups();
+    DefineWeightsAndRegions();
+
+    // Create plots
+    
+    TCut EdgeSRLowNoTrig = mllMin12 + OS + lepReq2525 + jetReq + dPhiJetMET + "MET>200";
+    TCut EdgeSRMedNoTrig = mllMin12 + OS + lepReq2525 + jetReq + dPhiJetMET + "MET>250" + "HT>400";
+    TCut EdgeSRHighNoTrig = mllMin12 + OS + lepReq2525 + jetReq + dPhiJetMET + "MET>200" + "HT>700";
+    vector<TCut> regionCut = {EdgeSRLowNoTrig, EdgeSRMedNoTrig, EdgeSRHighNoTrig};
+    vector<TString> regionName = {"SRLow", "SRMed", "SRHigh"};
+
+    // Just running data by itself creates problems (should fix)
+    
+    Group data1("pT-Binned Trigger Scheme");
+    Group data2("Single Lepton Trigger");
+    data1.AddSample("../Data/data");
+    data2.AddSample("../Data/data");
+
+    for (int i=0; i<regionCut.size(); i++) {
+        data1.SetCustomWeight("channel==0 && mmtrig==1 && mmtrig_match==1" + regionCut[i]);
+        data2.SetCustomWeight("channel==0 && (HLT_mu20_iloose_L1MU15==1 && Sum$(lep_match_HLT_mu20_iloose_L1MU15)>=1)" + regionCut[i]);
+        AddGroup(data1);
+        AddGroup(data2);
+        SetTree("outputTree");
+        AddPlot("mll", "", "mm_"+regionName[i], 15, 0, 300);
+        Plot(false);
+
+        data1.SetCustomWeight("channel==1 && eetrig==1 && eetrig_match==1" + regionCut[i]);
+        data2.SetCustomWeight("channel==1 && (HLT_e24_lhmedium_iloose_L1EM20VH==1 && Sum$(lep_match_HLT_e24_lhmedium_iloose_L1EM20VH)>=1)" + regionCut[i]);
+        AddGroup(data1);
+        AddGroup(data2);
+        SetTree("outputTree");
+        AddPlot("mll", "", "ee_"+regionName[i], 15, 0, 300);
+        Plot(false);
+
+        data1.SetCustomWeight("channel>=2 && emtrig==1 && emtrig_match==1" + regionCut[i]);
+        data2.SetCustomWeight("channel>=2 && ((HLT_mu20_iloose_L1MU15==1 && Sum$(lep_match_HLT_mu20_iloose_L1MU15)>=1) || (HLT_e24_lhmedium_iloose_L1EM20VH==1 && Sum$(lep_match_HLT_e24_lhmedium_iloose_L1EM20VH)>=1))" + regionCut[i]);
+        AddGroup(data1);
+        AddGroup(data2);
+        SetTree("outputTree");
+        AddPlot("mll", "", "em_"+regionName[i], 15, 0, 300);
+        Plot(false);
+
+        data1.SetCustomWeight("(channel==0 && mmtrig==1 && mmtrig_match==1) || (channel==1 && eetrig==1 && eetrig_match==1) || (channel>=2 && emtrig==1 && emtrig_match==1)" + regionCut[i]);
+        data2.SetCustomWeight("(channel==0 && (HLT_mu20_iloose_L1MU15==1 && Sum$(lep_match_HLT_mu20_iloose_L1MU15)>=1)) || (channel==1 && (HLT_e24_lhmedium_iloose_L1EM20VH==1 && Sum$(lep_match_HLT_e24_lhmedium_iloose_L1EM20VH)>=1)) || (channel>=2 && ((HLT_mu20_iloose_L1MU15==1 && Sum$(lep_match_HLT_mu20_iloose_L1MU15)>=1) || (HLT_e24_lhmedium_iloose_L1EM20VH==1 && Sum$(lep_match_HLT_e24_lhmedium_iloose_L1EM20VH)>=1)))" + regionCut[i]);
+        AddGroup(data1);
+        AddGroup(data2);
+        SetTree("outputTree");
+        AddPlot("mll", "", "full_"+regionName[i], 15, 0, 300);
+        Plot(false);
+    }
+}*/
+
+/*void DataORTest() {
+
+    // Options
+
+    //MCPath = "/afs/cern.ch/work/t/tholmes/ZMETSamples/Current_Ntuples/v00-20-NoSys/MC/";
+    MCPath = "~/eos/atlas/user/m/mazhang/Data/Ntuples/DataComparison/Altered/";
+    //dataPath = "/afs/cern.ch/work/t/tholmes/ZMETSamples/Current_Ntuples/v00-20-NoSys/Data/";
+    dataPath = "~/eos/atlas/user/m/mazhang/Data/xAOD/Data/v20_defaultOR/Data/";
+    saveDirectory = "/afs/cern.ch/user/m/mazhang/Plots/DataORTest/";
+    saveImage = true;
+    blinded = false;
+
+    DefineSampleGroups();
+    DefineWeightsAndRegions();
+
+    // Create plots
+    
+    //TCut EdgeSRLowNoTrig = mllMin12 + OS + lepReq2525 + jetReq + dPhiJetMET + "MET>200";
+    //TCut EdgeSRMedNoTrig = mllMin12 + OS + lepReq2525 + jetReq + dPhiJetMET + "MET>250" + "HT>400";
+    //TCut EdgeSRHighNoTrig = mllMin12 + OS + lepReq2525 + jetReq + dPhiJetMET + "MET>200" + "HT>700";
+    //vector<TCut> regionCut = {EdgeSRLowNoTrig, EdgeSRMedNoTrig, EdgeSRHighNoTrig};
+    vector<TCut> regionCut = {EdgeSRLow, EdgeSRMed, EdgeSRHigh, EdgeVRLow, EdgeVRMed, EdgeVRHigh, ""};
+    vector<TString> regionName = {"SRLow", "SRMed", "SRHigh", "VRLow", "VRMed", "VRHigh", "Total"};
+
+    Group data1("Default OR");
+    Group data2("SUSY OR");
+    data1.AddSample("dataDefaultOR");
+    data2.AddSample("dataHooberlap");
+
+    for (int i=0; i<regionCut.size(); i++) {
+        //AddGroup(data1);
+        //AddGroup(data2);
+        //SetTree("outputTree");
+        //AddPlot("mll", regionCut[i], regionName[i], 15, 0, 300);
+        //Plot(false);
+
+        AddGroup(data1);
+        AddGroup(data2);
+        SetTree("outputTree");
+        AddPlot("mu_jet_dR", regionCut[i], regionName[i] + "_dR", 50, 0, 8);
+        Plot(false);
+    }
+}*/
+
+/*void NonFS() {
+
+    // Options
+
+    MCPath = "/afs/cern.ch/work/t/tholmes/ZMETSamples/Current_Ntuples/v00-20-NoSys/MC/";
+    dataPath = "~/eos/atlas/user/m/mazhang/Data/xAOD/Data/v20_defaultOR/Data/";
+    saveDirectory = "/afs/cern.ch/user/m/mazhang/Plots/NonFS/";
+    saveImage = false;
+    blinded = false;
+
+    DefineSampleGroups();
+    DefineWeightsAndRegions();
+
+    // Create plots
+    
+    Group nonFS("Non-FS");
+    //nonFS.AddSample(410015);
+    //nonFS.AddSample(410016);
+    //nonFS.AddSample(361108);
+    //Group VV("VV");
+    //VV.AddSample(361068);
+    nonFS.AddSample(361063);
+    nonFS.AddSample(361064);
+    nonFS.AddSample(361065);
+    nonFS.AddSample(361066);
+    nonFS.AddSample(361067);
+    nonFS.AddSample(361068);
+    nonFS.AddSample(361073);
+    nonFS.AddSample(361077);
+    nonFS.AddSample(361084);
+    nonFS.AddSample(361086);
+    nonFS.AddSample(361607);
+    nonFS.AddSample(361100);
+    nonFS.AddSample(361101);
+    nonFS.AddSample(361102);
+    nonFS.AddSample(361103);
+    nonFS.AddSample(361104);
+    nonFS.AddSample(361105);
+    nonFS.AddSample(410066);
+    nonFS.AddSample(410067);
+    nonFS.AddSample(410068);
+    nonFS.AddSample(410081);
+    nonFS.AddSample(410111);
+    nonFS.AddSample(410112);
+    nonFS.AddSample(410113);
+    nonFS.AddSample(410114);
+    nonFS.AddSample(410115);
+    nonFS.AddSample(410116);
+    for (int i=361372; i<=361419; i++)
+        nonFS.AddSample(i);
+    for (int i=361468; i<=361483; i++)
+        nonFS.AddSample(i);
+
+    TCut newWeight = "3.2*weight1fb*trigweight";
+
+    vector<int> mllBinsLow {0,20,40,60,80,100,125,150,175,200,250,300,350,400,450,500};
+    vector<int> mllBinsMed {0,40,80,100,150,250,350,500};
+    vector<int> mllBinsHigh {1,31,71,111,151,251,401};
+
+    cout<<"Low"<<endl;
+
+    for (int i=0; i<mllBinsLow.size()-1; i++) {
+        AddGroup(nonFS);
+        //AddGroup(VV);
+        SetTree("outputTree");
+        AddPlot("mll", newWeight * (EdgeCRTLow + TCut("mll>" + TString(to_string(mllBinsLow[i])) + " && mll<" + TString(to_string(mllBinsLow[i+1])))), "EdgeSRLow", 50, 0, 8);
+        Plot(false);
+    }
+
+    cout<<"Med"<<endl;
+
+    for (int i=0; i<mllBinsMed.size()-1; i++) {
+        AddGroup(nonFS);
+        //AddGroup(VV);
+        SetTree("outputTree");
+        AddPlot("mll", newWeight * (EdgeCRTMed + TCut("mll>" + TString(to_string(mllBinsMed[i])) + " && mll<" + TString(to_string(mllBinsMed[i+1])))), "EdgeSRMed", 50, 0, 8);
+        Plot(false);
+    }
+
+    cout<<"High"<<endl;
+
+    for (int i=0; i<mllBinsHigh.size()-1; i++) {
+        AddGroup(nonFS);
+        //AddGroup(VV);
+        SetTree("outputTree");
+        AddPlot("mll", newWeight * (EdgeCRTHigh + TCut("mll>" + TString(to_string(mllBinsHigh[i])) + " && mll<" + TString(to_string(mllBinsHigh[i+1])))), "EdgeSRHigh", 50, 0, 8);
+        Plot(false);
+    }
+}*/
+
+/*void ZTruthMETPlots() {
+
+    // Options
+
+    MCPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/ZTruthMET/";
+    dataPath = "";
+    saveDirectory = "/afs/cern.ch/user/m/mazhang/Plots/ZTruthMETSR/";
+    saveImage = true;
+    blinded = false;
+
+    DefineSampleGroups();
+    DefineWeightsAndRegions();
+
+    // Create plots
+    
+    TCut newWeight = "3.2*weight1fb*trigweight";
+	saveExtension = "root";
+
+	Group Zee_bVeto ("Zee_bVeto");
+	Group Zee_bFilter ("Zee_bFilter");
+
+    for (int i=361372; i<=361395; i++) {
+		if (i==361374 || i==361377 || i==361380 || i==361383 || i==361386 || i==361389 || i==361392 || i==361395)
+			Zee_bFilter.AddSample(i);
+		else
+			Zee_bVeto.AddSample(i);
+    }
+
+	// Inclusive
+
+	//AddGroup(Zee_noDY);
+	//SetTree("outputTree");
+	//AddPlot("truthMET_NonInt", newWeight, "truthMET_NonInt_Zee", 50, 0, 100);
+	//AddPlot("truthMET_IntOut", newWeight, "truthMET_IntOut_Zee", 50, 0, 100);
+	//AddPlot("fakeMET", newWeight, "fakeMET_Zee", 50, 0, 100);
+	//Plot(false);
+
+	//AddGroup(Zmm_noDY);
+	//SetTree("outputTree");
+	//AddPlot("truthMET_NonInt", newWeight, "truthMET_NonInt_Zmm", 50, 0, 100);
+	//AddPlot("truthMET_IntOut", newWeight, "truthMET_IntOut_Zmm", 50, 0, 100);
+	//AddPlot("fakeMET", newWeight, "fakeMET_Zmm", 50, 0, 100);
+	//Plot(false);
+
+	//AddGroup(Ztt_noDY);
+	//SetTree("outputTree");
+	//AddPlot("truthMET_NonInt", newWeight, "truthMET_NonInt_Ztt", 50, 0, 100);
+	//AddPlot("truthMET_IntOut", newWeight, "truthMET_IntOut_Ztt", 50, 0, 100);
+	//AddPlot("fakeMET", newWeight, "fakeMET_Ztt", 50, 0, 100);
+	//Plot(false);
+
+	//AddGroup(Zee_bVeto);
+	//SetTree("outputTree");
+	//AddPlot("truthMET_NonInt", newWeight, "truthMET_NonInt_Zee_bVeto", 50, 0, 100);
+	//AddPlot("truthMET_IntOut", newWeight, "truthMET_IntOut_Zee_bVeto", 50, 0, 100);
+	//AddPlot("fakeMET", newWeight, "fakeMET_Zee_bVeto", 50, 0, 100);
+	//Plot(false);
+
+	//AddGroup(Zee_bFilter);
+	//SetTree("outputTree");
+	//AddPlot("truthMET_NonInt", newWeight, "truthMET_NonInt_Zee_bFilter", 50, 0, 100);
+	//AddPlot("truthMET_IntOut", newWeight, "truthMET_IntOut_Zee_bFilter", 50, 0, 100);
+	//AddPlot("fakeMET", newWeight, "fakeMET_Zee_bFilter", 50, 0, 100);
+	//Plot(false);
+
+	// By regions
+	
+	vector<TCut> regionCut = {EdgeSRLow, EdgeSRMed, EdgeSRHigh, SRZ};//  EdgeVRLow, EdgeVRMed, EdgeVRHigh};
+	vector<TString> regionName = {"SRLow", "SRMed", "SRHigh", "SRZ"};// "VRLow", "VRMed", "VRHigh"};
+
+	for (int i=0; i<regionCut.size(); i++) {
+		
+		AddGroup(Zee_noDY);
+		SetTree("outputTree");
+		AddPlot("truthMET_NonInt", regionCut[i]*newWeight, regionName[i]+"truthMET_NonInt_Zee", 8, 0, 600);
+		AddPlot("truthMET_IntOut", regionCut[i]*newWeight, regionName[i]+"truthMET_IntOut_Zee", 8, 0, 600);
+		AddPlot("fakeMET", regionCut[i]*newWeight, regionName[i]+"fakeMET_Zee", 8, 0, 600);
+		Plot(false);
+
+		AddGroup(Zmm_noDY);
+		SetTree("outputTree");
+		AddPlot("truthMET_NonInt", regionCut[i]*newWeight, regionName[i]+"truthMET_NonInt_Zmm", 8, 0, 600);
+		AddPlot("truthMET_IntOut", regionCut[i]*newWeight, regionName[i]+"truthMET_IntOut_Zmm", 8, 0, 600);
+		AddPlot("fakeMET", regionCut[i]*newWeight, regionName[i]+"fakeMET_Zmm", 8, 0, 600);
+		Plot(false);
+
+		AddGroup(Ztt_noDY);
+		SetTree("outputTree");
+		AddPlot("truthMET_NonInt", regionCut[i]*newWeight, regionName[i]+"truthMET_NonInt_Ztt", 8, 0, 600);
+		AddPlot("truthMET_IntOut", regionCut[i]*newWeight, regionName[i]+"truthMET_IntOut_Ztt", 8, 0, 600);
+		AddPlot("fakeMET", regionCut[i]*newWeight, regionName[i]+"fakeMET_Ztt", 8, 0, 600);
+		Plot(false);
+
+		AddGroup(Zee_bVeto);
+		SetTree("outputTree");
+		AddPlot("truthMET_NonInt", regionCut[i]*newWeight, regionName[i]+"truthMET_NonInt_Zee_bVeto", 8, 0, 600);
+		AddPlot("truthMET_IntOut", regionCut[i]*newWeight, regionName[i]+"truthMET_IntOut_Zee_bVeto", 8, 0, 600);
+		AddPlot("fakeMET", regionCut[i]*newWeight, regionName[i]+"fakeMET_Zee_bVeto", 8, 0, 600);
+		Plot(false);
+
+		AddGroup(Zee_bFilter);
+		SetTree("outputTree");
+		AddPlot("truthMET_NonInt", regionCut[i]*newWeight, regionName[i]+"truthMET_NonInt_Zee_bFilter", 8, 0, 600);
+		AddPlot("truthMET_IntOut", regionCut[i]*newWeight, regionName[i]+"truthMET_IntOut_Zee_bFilter", 8, 0, 600);
+		AddPlot("fakeMET", regionCut[i]*newWeight, regionName[i]+"fakeMET_Zee_bFilter", 8, 0, 600);
+		Plot(false);
+	}
+}
+
+void Table26DibosonPercentages() {
+
+    // Options
+
+	MCPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/v1_01/METMod/MC/";
+	dataPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/v1_01/METMod/Data/";
+    saveDirectory = "/afs/cern.ch/user/m/mazhang/Plots/DibosonPercentages/";
+    saveImage = true;
+    blinded = false;
+
+    DefineSampleGroups();
+    DefineWeightsAndRegions();
+
+    // Create plots
+    
+    TCut newWeight = TCut(TString(to_string(luminosity/1000.)+"*weight1fb*trigweight"));
+	saveExtension = "pdf";
+
+    vector<TCut> regionCut = {SRZ_noSF, CRT_noSF, VRT_noSF, VRS_noSF};
+    vector<TString> regionName = {"SRZ", "CRT", "VRT", "VRS"};
+
+    for (int i=0; i<regionCut.size(); i++) {
+		AddGroup(SherpaVV);
+		SetTree("outputTree");
+		AddPlot("mll", newWeight * (regionCut[i] + SF), "Sherpa mll SF " + regionName[i], 50, 0, 200);
+		AddPlot("mll", newWeight * (regionCut[i] + DF), "Sherpa mll OF " + regionName[i], 50, 0, 200);
+		Plot(false);
+		//AddPlot("truthMET_IntOut", regionCut[i]*newWeight, regionName[i]+"truthMET_IntOut", 50, 0, 100);
+
+		AddGroup(PowhegZZ_2l2v);
+		AddGroup(PowhegWW);
+		SetTree("outputTree");
+		AddPlot("mll", newWeight * (regionCut[i] + SF), "Powheg mll SF " + regionName[i], 50, 0, 200);
+		AddPlot("mll", newWeight * (regionCut[i] + DF), "Powheg mll OF " + regionName[i], 50, 0, 200);
+		Plot(false);
+	}
+}
+
+void TriggerSystematics() {
+
+    // Options
+
+    MCPath = "/afs/cern.ch/work/m/mazhang/Data/v21_Sys/";
+    dataPath = "";
+    saveDirectory = "/afs/cern.ch/user/m/mazhang/Plots/DibosonSystematics/";
+    saveImage = false;
+    blinded = false;
+
+    DefineSampleGroups();
+    DefineWeightsAndRegions();
+
+    // Create plots
+    
+	vector<TCut> regionCut = {EdgeSRLow, EdgeSRMed, EdgeSRHigh, EdgeVRLow, EdgeVRMed, EdgeVRHigh};
+	vector<TCut> DFRegionCut = {EdgeCRTLow, EdgeCRTMed, EdgeCRTHigh, EdgeVRTLow, EdgeVRTMed, EdgeVRTHigh};
+	vector<TString> regionName = {"EdgeSRLow", "EdgeSRMed", "EdgeSRHigh", "EdgeVRLow", "EdgeVRMed", "EdgeVRHigh"};
+	//vector<TCut> regionCut = {VR3L};
+	//vector<TCut> DFRegionCut = {VR3LDF};
+	//vector<TString> regionName = {"VR 3L"};
+    TCut newWeight = "3.2*weight1fb";
+
+	for (int cutn=0; cutn<regionCut.size(); cutn++) {
+
+        cout<<"New Region: "<<regionName[cutn]<<endl;
+
+        TCut thisRegion = regionCut[cutn];
+        TCut thisDFRegion = DFRegionCut[cutn];
+
+        Group SherpaVVSF = SherpaVV;
+        SherpaVVSF.SetName("Sherpa VV SF");
+        Group SherpaVVDF = SherpaVV;
+        SherpaVVDF.SetCustomWeight(thisDFRegion * newWeight * "trigweight");
+        SherpaVVDF.SetName("Sherpa VV DF");
+
+        AddGroup(SherpaVVSF);
+        AddGroup(SherpaVVDF);
+        AddGroup(SherpaWZ);
+        AddGroup(SherpaZZ);
+        AddGroup(rareTop);
+        SetTree("outputTree");
+        cout<<"nominal"<<endl;
+        AddPlot("mll", thisRegion * newWeight * "trigweight", treeName, 50, 0, 1000);
+        Plot(true);
+
+        SherpaVVDF.SetCustomWeight(thisDFRegion * newWeight * "trigweight_down");
+        AddGroup(SherpaVVSF);
+        AddGroup(SherpaVVDF);
+        AddGroup(SherpaWZ);
+        AddGroup(SherpaZZ);
+        AddGroup(rareTop);
+        SetTree("outputTree");
+        cout<<"trigweight_down"<<endl;
+        AddPlot("mll", thisRegion * newWeight * "trigweight_down", treeName, 50, 0, 1000);
+        Plot(true);
+	}
+}
+
+void MC15cPlots() {
+
+    // Options
+
+    MCPath = "/afs/cern.ch/work/m/mazhang/Data/mc15c/Gorm/";
+    dataPath = "/afs/cern.ch/work/m/mazhang/Data/mc15c/Gorm/";
+    saveDirectory = "/afs/cern.ch/user/m/mazhang/Plots/MC15c/";
+    saveImage = true;
+    blinded = false;
+
+    DefineSampleGroups();
+    DefineWeightsAndRegions();
+
+    // Create plots
+    
+    //TCut newWeight = "3.2*weight1fb*trigweight";
+
+    Group data1("Old Data");
+	data1.AddSample("../../../../../../user/m/mazhang/eos/atlas/user/l/longjon/Ntuples/v00-21/Data/data");
+    Group data2("New Data");
+    data2.AddSample("data");
+
+	vector<TCut> regions = {EdgeSRLow, EdgeSRMed, EdgeSRHigh, EdgeVRLow, EdgeVRMed, EdgeVRHigh};
+	vector<TString> regionNames = {"EdgeSRLow", "EdgeSRMed", "EdgeSRHigh", "EdgeVRLow", "EdgeVRMed", "EdgeVRHigh"};
+
+	for (int i=0; i<regions.size(); i++) {
+		auto region = regions[i];
+		auto regionName = regionNames[i];
+		AddGroup(data1);
+		AddGroup(data2);
+		//AddPlot("MET", region, "MET_"+regionName, 20, 0, 500);
+		//AddPlot("jet_n", region, "jet_n_"+regionName, 10, 0, 10);
+		AddPlot("HT", region, "HT_"+regionName, 20, 0, 2000);
+		//AddPlot("lep_pT[0]", region, "lep_pT[0]_"+regionName, 20, 0, 400);
+		//AddPlot("lep_pT[1]", region, "lep_pT[1]_"+regionName, 20, 0, 200);
+		//AddPlot("jet_pT[0]", region, "jet_pT[0]_"+regionName, 20, 0, 800);
+		//AddPlot("jet_pT[1]", region, "jet_pT[1]_"+regionName, 20, 0, 400);
+		//AddPlot("lep_eta[0]", region, "lep_eta[0]_"+regionName, 20, -3, 3);
+		//AddPlot("lep_eta[1]", region, "lep_eta[1]_"+regionName, 20, -3, 3);
+		//AddPlot("jet_eta[0]", region, "jet_eta[0]_"+regionName, 20, -3, 3);
+		//AddPlot("jet_eta[1]", region, "jet_eta[1]_"+regionName, 20, -3, 3);
+		Plot(false);
+	}
+}
+
+void TriggerEfficiencies() {
+
+    // Options
+
+    MCPath = "/afs/cern.ch/work/m/mazhang/Data/mc15c/Gorm/";
+    dataPath = "/afs/cern.ch/work/m/mazhang/Data/mc15c/Gorm/";
+    saveDirectory = "/afs/cern.ch/user/m/mazhang/Plots/TriggerEfficiencies/";
+    saveImage = true;
+    blinded = false;
+
+    DefineSampleGroups();
+    DefineWeightsAndRegions();
+
+    // Create plots
+    
+    Group data1("Data ");
+	data1.AddSample("../../../../../../user/m/mazhang/eos/atlas/user/l/longjon/Ntuples/v00-21/Data/data");
+
+    AddGroup(data1);
+	vector<TString> triggers = {"HLT_e60_lhmedium", "HLT_2e12_lhloose_L12EM10VH", "HLT_2e17_lhloose", "HLT_mu50", "HLT_mu18_mu8noL1", "HLT_mu24_mu8noL1", "HLT_e17_lhloose_mu14", "HLT_e7_lhmedium_mu24"};
+
+	for (auto trigger: triggers) {
+		AddPlot("lep_pT[0]", TCut(trigger), trigger+"_lep_pT[0]", 20, 0, 200);
+		AddPlot("lep_pT[1]", TCut(trigger), trigger+"_lep_pT[1]", 20, 0, 200);
+		AddPlot("el_pT[0]", TCut(trigger), trigger+"_el_pT[0]", 20, 0, 200);
+		AddPlot("el_pT[1]", TCut(trigger), trigger+"_el_pT[1]", 20, 0, 200);
+		AddPlot("mu_pT[0]", TCut(trigger), trigger+"_mu_pT[0]", 20, 0, 200);
+		AddPlot("mu_pT[1]", TCut(trigger), trigger+"_mu_pT[1]", 20, 0, 200);
+	}
+    Plot(true);
+}
+
+void ZPeak() {
+
+    // Options
+
+    MCPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/MC15C/MC/";
+    dataPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/data16/Data/";
+    saveDirectory = "/afs/cern.ch/user/m/mazhang/Plots/data16ZPeak/";
+    saveImage = true;
+    blinded = false;
+
+    DefineSampleGroups();
+    DefineWeightsAndRegions();
+
+    // Create plots
+    
+	AddGroup(ttbar);
+	//AddGroup(Zee);
+	//AddGroup(Zmm);
+	//AddGroup(Ztt);
+	AddGroup(rareTop);
+	AddGroup(SherpaVV);
+	AddGroup(SherpaWZ);
+	AddGroup(SherpaZZ);
+	data.SetCustomWeight("1");
+	AddData();
+	AddPlot("mll", MCWeight, "Z peak", 50, 0, 300, true);
+	Plot(true);
+}
+
+void DataComparisonPlots() {
+
+    // Options
+
+	MCPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/data16/Data/";
+    dataPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/data16/Data/";
+    saveDirectory = "/afs/cern.ch/user/m/mazhang/Plots/dataComparison20.7/";
+    saveImage = true;
+    blinded = false;
+
+    DefineSampleGroups();
+    DefineWeightsAndRegions();
+
+    // Create plots
+    
+	Group Data2015 ("20.7 2015 Data");
+	Data2015.AddSample("2015datav20_7");
+	Data2015.SetCustomWeight("1");
+	AddGroup(Data2015);
+	Group Data2016 ("Scaled 2016 Data");
+	Data2016.AddSample("data");
+	AddGroup(Data2016);
+	//AddData();
+	AddPlot("mll", "3382121/117052", "mll", 30, 0, 300, true);
+	AddPlot("lep_pT", "3382121/117052", "lep_pT", 30, 0, 300, true);
+	AddPlot("MET", "3382121/117052", "MET", 30, 0, 300, true);
+	AddPlot("jet_n", "3382121/117052", "jet_n", 5, 0, 5, true);
+	AddPlot("bjet_n", "3382121/117052", "bjet_n", 5, 0, 5, true);
+	Plot(false);
+}
+
+void DataMCComparisonPlots() {
+
+    // Options
+
+	MCPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/MC15C/MC/";
+	//dataPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/MC15C/Data/";
+    dataPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/data16/Reprocessed2015Data/";
+    saveDirectory = "/afs/cern.ch/user/m/mazhang/Plots/data15ReprocessedMCComparison/";
+    saveImage = true;
+    blinded = false;
+
+    DefineSampleGroups();
+    DefineWeightsAndRegions();
+
+    // Create plots
+    
+    Group Sherpa22Zee("Sherpa 2.2 Zee");
+    Group Sherpa22Zmm("Sherpa 2.2 Zmm");
+    Group Sherpa22Ztt("Sherpa 2.2 Ztt");
+	for (int i=363102; i<=363122; i++) {
+        Sherpa22Ztt.AddSample(i);
+    }
+    for (int i=363364; i<=363387; i++) {
+        Sherpa22Zmm.AddSample(i);
+    }
+    for (int i=363388; i<=363411; i++) {
+        if (i==363393) continue;
+        if (i==363401) continue;
+        Sherpa22Zee.AddSample(i);
+    }
+
+	AddGroup(Sherpa22Zee);
+	AddGroup(Sherpa22Zmm);
+	AddGroup(Sherpa22Ztt);
+	AddGroup(ttbar);
+	AddGroup(rareTop);
+	AddGroup(SherpaVV);
+	AddGroup(SherpaWZ);
+	AddGroup(SherpaZZ);
+	data.SetCustomWeight("1");
+	AddData();
+
+    //TCut newWeight = ".335*weight1fb";
+    TCut newWeight = "3.209*weight1fb";
+	AddPlot("mll", newWeight, "mll", 30, 0, 300, true);
+	AddPlot("lep_pT", newWeight, "lep_pT", 30, 0, 300, true);
+	AddPlot("MET", newWeight, "MET", 30, 0, 300, true);
+	AddPlot("jet_n", newWeight, "jet_n", 5, 0, 5, true);
+	AddPlot("bjet_n", newWeight, "bjet_n", 5, 0, 5, true);
+	Plot(true);
+}
+
+void MCYields() {
+
+    // Options
+
+	MCPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/MC15C/MC/";
+	dataPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/MC15C/Data/";
+    //dataPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/data16/Reprocessed2015Data/";
+    saveDirectory = "/afs/cern.ch/user/m/mazhang/Plots/MC15CYields/";
+    saveImage = true;
+    blinded = false;
+
+    DefineSampleGroups();
+    DefineWeightsAndRegions();
+
+    // Create plots
+    
+    Group Sherpa22Zee("Sherpa 2.2 Zee");
+    Group Sherpa22Zmm("Sherpa 2.2 Zmm");
+    Group Sherpa22Ztt("Sherpa 2.2 Ztt");
+	for (int i=363102; i<=363122; i++) {
+        Sherpa22Ztt.AddSample(i);
+    }
+    for (int i=363364; i<=363387; i++) {
+        Sherpa22Zmm.AddSample(i);
+    }
+    for (int i=363388; i<=363411; i++) {
+        if (i==363393) continue;
+        if (i==363401) continue;
+        Sherpa22Zee.AddSample(i);
+    }
+
+	//vector<TCut> regionCut = {EdgeSRLow, EdgeSRMed, EdgeSRHigh, SRZ, VRT, VRS, EdgeVRLow, EdgeVRMed, EdgeVRHigh};
+	//vector<TString> regionName = {"EdgeSRLow", "EdgeSRMed", "EdgeSRHigh", "SRZ", "VRT", "VRS", "EdgeVRLow", "EdgeVRMed", "EdgeVRHigh"};
+	vector<TCut> regionCut = {EdgeSRLow, EdgeSRMed, EdgeSRHigh};
+	vector<TString> regionName = {"EdgeSRLow", "EdgeSRMed", "EdgeSRHigh"};
+
+	for (int cutn=0; cutn<regionCut.size(); cutn++) {
+
+        TCut thisRegion = regionCut[cutn];
+		TCut newWeight = thisRegion * ".335*weight1fb";
+        TString thisRegionName = regionName[cutn];
+
+		AddGroup(Sherpa22Zee);
+		AddGroup(Sherpa22Zmm);
+		AddGroup(Sherpa22Ztt);
+		AddGroup(ttbar);
+		AddGroup(rareTop);
+		AddGroup(SherpaVV);
+		AddGroup(SherpaWZ);
+		AddGroup(SherpaZZ);
+		data.SetCustomWeight(thisRegion);
+		//if (cutn>=4)
+			//AddData();
+
+		//AddPlot("mll", newWeight, thisRegionName + " mll", 30, 0, 300, false);
+		//AddPlot("lep_pT", newWeight, thisRegionName + " lep_pT", 50, 0, 500, false);
+		AddPlot("MET", newWeight, thisRegionName + " MET", 50, 0, 1000, false);
+		//AddPlot("jet_n", newWeight, thisRegionName + " jet_n", 10, 0, 10, false);
+		Plot(true);
+	}
+}
+
+void MET_OR() {
+
+    // Options
+
+	MCPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/MET_OR/";
+	dataPath = "";
+    saveDirectory = "/afs/cern.ch/user/m/mazhang/Plots/MET_OR/";
+    saveImage = true;
+    blinded = false;
+
+    DefineSampleGroups();
+    DefineWeightsAndRegions();
+
+    // Create plots
+    
+    Group Zee_0("ufrac >= 0.0");
+    Group Zee_1("ufrac >= 0.1");
+    Group Zee_2("ufrac >= 0.2");
+    Group Zee_3("ufrac >= 0.3");
+    Group Zee_4("ufrac >= 0.4");
+    Group Zee_5("ufrac >= 0.5 (normal)");
+
+    Zee_0.AddSample("Zee/0.0/361106");
+    Zee_1.AddSample("Zee/0.1/361106");
+    Zee_2.AddSample("Zee/0.2/361106");
+    Zee_3.AddSample("Zee/0.3/361106");
+    Zee_4.AddSample("Zee/0.4/361106");
+    Zee_5.AddSample("Zee/0.5/361106");
+
+    Group Photon_0("ufrac >= 0.0");
+    Group Photon_1("ufrac >= 0.1");
+    Group Photon_2("ufrac >= 0.2");
+    Group Photon_3("ufrac >= 0.3");
+    Group Photon_4("ufrac >= 0.4");
+    Group Photon_5("ufrac >= 0.5 (normal)");
+
+    Photon_0.AddSample("PhotonsHigh/0.0/361060");
+    Photon_0.AddSample("PhotonsHigh/0.0/361061");
+    Photon_0.AddSample("PhotonsHigh/0.0/361062");
+    Photon_1.AddSample("PhotonsHigh/0.1/361060");
+    Photon_1.AddSample("PhotonsHigh/0.1/361061");
+    Photon_1.AddSample("PhotonsHigh/0.1/361062");
+    Photon_2.AddSample("PhotonsHigh/0.2/361060");
+    Photon_2.AddSample("PhotonsHigh/0.2/361061");
+    Photon_2.AddSample("PhotonsHigh/0.2/361062");
+    Photon_3.AddSample("PhotonsHigh/0.3/361060");
+    Photon_3.AddSample("PhotonsHigh/0.3/361061");
+    Photon_3.AddSample("PhotonsHigh/0.3/361062");
+    Photon_4.AddSample("PhotonsHigh/0.4/361060");
+    Photon_4.AddSample("PhotonsHigh/0.4/361061");
+    Photon_4.AddSample("PhotonsHigh/0.4/361062");
+    Photon_5.AddSample("PhotonsHigh/0.5/361060");
+    Photon_5.AddSample("PhotonsHigh/0.5/361061");
+    Photon_5.AddSample("PhotonsHigh/0.5/361062");
+
+    Group PhotonMed_0("ufrac >= 0.0");
+    Group PhotonMed_1("ufrac >= 0.1");
+    Group PhotonMed_2("ufrac >= 0.2");
+    Group PhotonMed_3("ufrac >= 0.3");
+    Group PhotonMed_4("ufrac >= 0.4");
+    Group PhotonMed_5("ufrac >= 0.5 (normal)");
+
+    PhotonMed_0.AddSample("PhotonsMed/0.0/361042");
+    PhotonMed_0.AddSample("PhotonsMed/0.0/361043");
+    PhotonMed_0.AddSample("PhotonsMed/0.0/361044");
+    PhotonMed_1.AddSample("PhotonsMed/0.1/361042");
+    PhotonMed_1.AddSample("PhotonsMed/0.1/361043");
+    PhotonMed_1.AddSample("PhotonsMed/0.1/361044");
+    PhotonMed_2.AddSample("PhotonsMed/0.2/361042");
+    PhotonMed_2.AddSample("PhotonsMed/0.2/361043");
+    PhotonMed_2.AddSample("PhotonsMed/0.2/361044");
+    PhotonMed_3.AddSample("PhotonsMed/0.3/361042");
+    PhotonMed_3.AddSample("PhotonsMed/0.3/361043");
+    PhotonMed_3.AddSample("PhotonsMed/0.3/361044");
+    PhotonMed_4.AddSample("PhotonsMed/0.4/361042");
+    PhotonMed_4.AddSample("PhotonsMed/0.4/361043");
+    PhotonMed_4.AddSample("PhotonsMed/0.4/361044");
+    PhotonMed_5.AddSample("PhotonsMed/0.5/361042");
+    PhotonMed_5.AddSample("PhotonsMed/0.5/361043");
+    PhotonMed_5.AddSample("PhotonsMed/0.5/361044");
+
+    Group PhotonLow_0("ufrac >= 0.0");
+    Group PhotonLow_1("ufrac >= 0.1");
+    Group PhotonLow_2("ufrac >= 0.2");
+    Group PhotonLow_3("ufrac >= 0.3");
+    Group PhotonLow_4("ufrac >= 0.4");
+    Group PhotonLow_5("ufrac >= 0.5 (normal)");
+
+    PhotonLow_0.AddSample("PhotonsLow/0.0");
+    PhotonLow_1.AddSample("PhotonsLow/0.1");
+    PhotonLow_2.AddSample("PhotonsLow/0.2");
+    PhotonLow_3.AddSample("PhotonsLow/0.3");
+    PhotonLow_4.AddSample("PhotonsLow/0.4");
+    PhotonLow_5.AddSample("PhotonsLow/0.5");
+
+    vector<TCut> myCuts = {"1", "jet_n==0", "jet_n==1", "jet_n==2"};
+    //vector<TCut> myCuts = {VRS};
+    //TCut blah = trigger + mllMin45 + lepReq5025 + jetReq + OS + ZWindow + "MET>100 && MET<200" + HTincl600 + dPhiJetMET + SF;
+    TCut blah = jetReq + "MET>225" + HTincl600 + dPhiJetMET;
+
+    for (auto myCut:myCuts) {
+
+        TString cutName = TString(myCut);
+        if (cutName=="1") cutName = "Inclusive";
+        //TString cutName = "SRZ";
+
+        //AddGroup(Zee_5);
+        //AddGroup(Zee_4);
+        //AddGroup(Zee_3);
+        //AddGroup(Zee_2);
+        //AddGroup(Zee_1);
+        ////AddGroup(Zee_0);
+
+        //AddPlot("MET", myCut, "Zee MET - " + cutName, 25, 0, 250, true, false);
+        //AddPlot("MET_softTerm", myCut, "Zee MET soft term - " + cutName, 25, 0, 100, true, false);
+        //AddPlot("abs(MET-truthMET)", myCut, "Zee MET residual - " + cutName, 25, 0, 250, true, false);
+        //Plot(false);
+
+        //AddGroup(Photon_5);
+        //AddGroup(Photon_4);
+        //AddGroup(Photon_3);
+        //AddGroup(Photon_2);
+        //AddGroup(Photon_1);
+        //AddGroup(Photon_0);
+
+        //AddPlot("MET", myCut, "Photon pT>4000 MET - " + cutName, 25, 0, 2000, true, false);
+        //AddPlot("MET_softTerm", myCut, "Photon pT>4000 MET soft term - " + cutName, 25, 0, 400, true, false);
+        //AddPlot("abs(MET-truthMET)", myCut, "Photon pT>4000 MET residual - " + cutName, 25, 0, 2000, true, false);
+        //Plot(false);
+
+        AddGroup(PhotonMed_5);
+        AddGroup(PhotonMed_4);
+        AddGroup(PhotonMed_3);
+        AddGroup(PhotonMed_2);
+        AddGroup(PhotonMed_1);
+        AddGroup(PhotonMed_0);
+
+        AddPlot("MET", myCut, "Photon pT 70-140 MET - " + cutName, 25, 0, 500, true, false);
+        AddPlot("MET_softTerm", myCut, "Photon pT 70-140 MET soft term - " + cutName, 25, 0, 150, true, false);
+        AddPlot("abs(MET-truthMET)", myCut, "Photon pT 70-140 MET residual - " + cutName, 25, 0, 500, true, false);
+        Plot(false);
+
+        //AddPlot("MET", myCut, "Photon pT>4000 MET - " + cutName, 25, 0, 2500, true, false);
+        //AddPlot("MET_softTerm", myCut, "Photon pT>4000 MET soft term - " + cutName, 25, 0, 100, true, false);
+        //AddPlot("abs(MET-truthMET)", myCut, "Photon pT>4000 MET residual - " + cutName, 25, 0, 2500, true, false);
+        //Plot(false);
+
+        //AddGroup(PhotonLow_5);
+        //AddGroup(PhotonLow_4);
+        //AddGroup(PhotonLow_3);
+        //AddGroup(PhotonLow_2);
+        //AddGroup(PhotonLow_1);
+        //AddGroup(PhotonLow_0);
+
+        //AddPlot("MET", myCut, "Photon pT 35-70 (C Veto B Veto) MET - " + cutName, 25, 0, 250, true, false);
+        //AddPlot("MET_softTerm", myCut, "Photon pT 35-70 (C Veto B Veto) MET soft term - " + cutName, 25, 0, 100, true, false);
+        //AddPlot("abs(MET-truthMET)", myCut, "Photon pT 35-70 (C Veto B Veto) MET residual - " + cutName, 25, 0, 250, true, false);
+        //Plot(false);
+    }
+}
+
+void WeightCheck() {
+
+    // Options
+
+	MCPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/v1_01/METMod/MC/";
+	dataPath = "";
+    saveDirectory = "/afs/cern.ch/user/m/mazhang/Plots/MET_OR/";
+    saveImage = true;
+    blinded = false;
+
+    DefineSampleGroups();
+    DefineWeightsAndRegions();
+
+    // Create plots
+    
+    //vector<int> samples = {342556, 361386, 361419, 361476, 363107, 363378, 363411,
+        //361063, 361387, 361420, 361477, 363108, 363379, 407012,
+        //361064, 361388, 361421, 361478, 363109, 363380, 407019,
+        //361065, 361389, 361422, 361479, 363110, 363381, 407021,
+        //361066, 361390, 361423, 361480, 363111, 363382, 410000,
+        //361067, 361391, 361424, 361481, 363112, 363383, 410003,
+        //361068, 361392, 361425, 361482, 363113, 363384, 410015,
+        //361069, 361393, 361426, 361483, 363114, 363385, 410016,
+        //361070, 361394, 361427, 361484, 363115, 363386, 410021,
+        //361071, 361395, 361428, 361485, 363116, 363387, 410022,
+        //361072, 361396, 361429, 361486, 363117, 363388, 410023,
+        //361073, 361397, 361430, 361487, 363118, 363389, 410050,
+        //361077, 361398, 361431, 361488, 363119, 363390, 410064,
+        //361086, 361399, 361432, 361489, 363120, 363391, 410065,
+        //361091, 361400, 361433, 361490, 363121, 363392, 410066,
+        //361096, 361401, 361434, 361491, 363122, 363393, 410067,
+        //361106, 361402, 361435, 361600, 363361, 363394, 410068,
+        //361107, 361403, 361436, 361601, 363362, 363395, 410081,
+        //361108, 361404, 361437, 361602, 363363, 363396, 410111,
+        //361372, 361405, 361438, 361603, 363364, 363397, 410112,
+        //361373, 361406, 361439, 361604, 363365, 363398, 410113,
+        //361374, 361407, 361440, 361605, 363366, 363399, 410114,
+        //361375, 361408, 361441, 361606, 363367, 363400, 410115,
+        //361376, 361409, 361442, 361607, 363368, 363401, 410116,
+        //361377, 361410, 361443, 361608, 363369, 363402, 410159,
+        //361378, 361411, 361468, 361609, 363370, 363403, 410187,
+        //361379, 361412, 361469, 361610, 363371, 363404, 410188,
+        //361380, 361413, 361470, 361611, 363372, 363405, 410189,
+        //361381, 361414, 361471, 363102, 363373, 363406,
+        //361382, 361415, 361472, 363103, 363374, 363407,
+        //361383, 361416, 361473, 363104, 363375, 363408,
+        //361384, 361417, 361474, 363105, 363376, 363409,
+        //361385, 361418, 361475, 363106, 363377, 363410};
+
+    vector<int> samples = {363411, 363110, 361392, 361485, 410022,
+        361397, 361086, 410066, 363122, 361106, 361107, 361108,
+        363363, 363398, 410113, 361440, 361605, 363366, 363399,
+        361608, 410159, 410187, 361412, 410188, 361380, 361611,
+        410189, 363102, 363376, 363377};
+
+    for (int sample:samples) {
+        Group Test("Test");
+        Test.AddSample(sample);
+        AddGroup(Test);
+        std::cout<<"Checkpoint "<<sample<<std::endl;
+        AddPlot("weight1fb", "weight1fb", "weight1fb", 25, 0, 500, true, false);
+        Plot(false);
+    }
+}
+
+void ZPtStitching() {
+
+    // Options
+
+	MCPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/v1_01/METMod/MC/";
+	dataPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/v1_01/METMod/Data/";
+    saveDirectory = "/afs/cern.ch/user/m/mazhang/Plots/ZCheck/";
+    saveImage = true;
+    blinded = false;
+
+    DefineSampleGroups();
+    DefineWeightsAndRegions();
+
+    AddGroup(Zee);
+    AddPlot("Z_pt", "weight1fb", "Zee_pt", 25, 0, 2500, true, false);
+    Plot(false);
+
+    AddGroup(Zmm);
+    AddPlot("Z_pt", "weight1fb", "Zmm_pt", 25, 0, 2500, true, false);
+    Plot(false);
+
+    AddGroup(Ztt);
+    AddPlot("Z_pt", "weight1fb", "Ztt_pt", 25, 0, 2500, true, false);
+    Plot(false);
+}
+}*/
+
+/*void VVSystematicPlots() {
+
+    // Options
+
+	MCPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/v1_01/METMod/MC/";
+	dataPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/v1_01/METMod/Data/";
+    saveDirectory = "/afs/cern.ch/user/m/mazhang/Plots/VVSystematic/";
+    saveImage = false;
+    blinded = false;
+
+    SetTree("outputTree");
+    SetSaveExtension("pdf");
+    DefineSampleGroups();
+    DefineWeightsAndRegions();
+
+    // Create plots
+
+    TCut ZWindow = "mll>61 && mll<121";
+    TCut offZWindow = "mll<61 || mll>121";
+    TCut newWeight = "3.2*weight1fb";
+
+    AddGroup(SherpaVV);
+    AddPlot("mll", (EdgeSRLow + ZWindow) * newWeight, "mll of SF Z-Window VV in EDGE SR Low", 50, 0, 400);
+    AddPlot("mll", (EdgeCRTLow + ZWindow) * newWeight, "mll of DF Z-Window VV in EDGE SR Low", 50, 0, 400);
+    AddPlot("mll", (EdgeSRLow + offZWindow) * newWeight, "mll of SF Off-Z VV in EDGE SR Low", 50, 0, 400);
+    AddPlot("mll", (EdgeCRTLow + offZWindow) * newWeight, "mll of DF Off-Z VV in EDGE SR Low", 50, 0, 400);
+    AddPlot("mll", (EdgeSRMed + ZWindow) * newWeight, "mll of SF Z-Window VV in EDGE SR Med", 50, 0, 400);
+    AddPlot("mll", (EdgeCRTMed + ZWindow) * newWeight, "mll of DF Z-Window VV in EDGE SR Med", 50, 0, 400);
+    AddPlot("mll", (EdgeSRMed + offZWindow) * newWeight, "mll of SF Off-Z VV in EDGE SR Med", 50, 0, 400);
+    AddPlot("mll", (EdgeCRTMed + offZWindow) * newWeight, "mll of DF Off-Z VV in EDGE SR Med", 50, 0, 400);
+    AddPlot("mll", (EdgeSRHigh + ZWindow) * newWeight, "mll of SF Z-Window VV in EDGE SR High", 50, 0, 400);
+    AddPlot("mll", (EdgeCRTHigh + ZWindow) * newWeight, "mll of DF Z-Window VV in EDGE SR High", 50, 0, 400);
+    AddPlot("mll", (EdgeSRHigh + offZWindow) * newWeight, "mll of SF Off-Z VV in EDGE SR High", 50, 0, 400);
+    AddPlot("mll", (EdgeCRTHigh + offZWindow) * newWeight, "mll of DF Off-Z VV in EDGE SR High", 50, 0, 400);
+    AddPlot("mll", (EdgeVRLow + ZWindow) * newWeight, "mll of SF Z-Window VV in EDGE VR Low", 50, 0, 400);
+    AddPlot("mll", (EdgeVRTLow + ZWindow) * newWeight, "mll of DF Z-Window VV in EDGE VR Low", 50, 0, 400);
+    AddPlot("mll", (EdgeVRLow + offZWindow) * newWeight, "mll of SF Off-Z VV in EDGE VR Low", 50, 0, 400);
+    AddPlot("mll", (EdgeVRTLow + offZWindow) * newWeight, "mll of DF Off-Z VV in EDGE VR Low", 50, 0, 400);
+    AddPlot("mll", (EdgeVRMed + ZWindow) * newWeight, "mll of SF Z-Window VV in EDGE VR Med", 50, 0, 400);
+    AddPlot("mll", (EdgeVRTMed + ZWindow) * newWeight, "mll of DF Z-Window VV in EDGE VR Med", 50, 0, 400);
+    AddPlot("mll", (EdgeVRMed + offZWindow) * newWeight, "mll of SF Off-Z VV in EDGE VR Med", 50, 0, 400);
+    AddPlot("mll", (EdgeVRTMed + offZWindow) * newWeight, "mll of DF Off-Z VV in EDGE VR Med", 50, 0, 400);
+    AddPlot("mll", (EdgeVRHigh + ZWindow) * newWeight, "mll of SF Z-Window VV in EDGE VR High", 50, 0, 400);
+    AddPlot("mll", (EdgeVRTHigh + ZWindow) * newWeight, "mll of DF Z-Window VV in EDGE VR High", 50, 0, 400);
+    AddPlot("mll", (EdgeVRHigh + offZWindow) * newWeight, "mll of SF Off-Z VV in EDGE VR High", 50, 0, 400);
+    AddPlot("mll", (EdgeVRTHigh + offZWindow) * newWeight, "mll of DF Off-Z VV in EDGE VR High", 50, 0, 400);
+    Plot();
+}*/
+
+//-----------------------------------------------------------------------------------------------------
+// Current Functions
+//-----------------------------------------------------------------------------------------------------
+
+void SherpaPowhegSystematic_DibosonVR() {
+
+    // Options
+
+    MCPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/v1_02/MCDibosons/";
+    dataPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/v1_02/Data/";
+    saveDirectory = "/afs/cern.ch/user/m/mazhang/Plots/SherpaPowhegSystematic/";
+    saveImage = false;
+    blinded = false;
+
+    SetLuminosity(14700);
+
+    DefineSampleGroups();
+    DefineWeightsAndRegions();
+
+    Group PowhegWWZZ ("Powheg WW/ZZ");
+    PowhegWWZZ.AddSample("361604");
+    PowhegWWZZ.AddSample("361600");
+
+    // Get numbers
+
+    vector<double> VRWZ = {0,0,0,0,0,0}, VRZZ = {0,0,0,0,0,0}, VR3L = {0,0,0,0,0,0};
+
+    vector<TCut> regionCut = {"VRWZ", "VRZZ", "VR3L"};
+
+    for (int cutn=0; cutn<regionCut.size(); cutn++) {
+        TCut thisRegion = regionCut[cutn];
+        AddGroup(SherpaWZ);
+        AddGroup(PowhegWZ);
+        AddGroup(SherpaVV);
+        AddGroup(PowhegWWZZ);
+        AddGroup(SherpaZZ);
+        AddGroup(PowhegZZ_4l);
+        Plot* newPlot = AddPlot("mll", to_TCut(to_TString(luminosity/1000.)+"*weight1fb") * thisRegion);
+        newPlot->SetBins(50, 0, 1000);
+        dataTables yieldsAndErrors = MakePlot(true);
+        auto yields = yieldsAndErrors.first;
+        auto errors = yieldsAndErrors.second;
+        vector<double> VRYields = {};
+        for (int i=0; i<yields.size(); i++) {
+            VRYields.push_back(yields[i][0]);
+        }
+        if (cutn==0)
+            VRWZ = VRYields;
+        else if (cutn==1)
+            VRZZ = VRYields;
+        else if (cutn==2)
+            VR3L = VRYields;
+    }
+
+    int precision = 2;
+
+    cout<<"\\begin{table}"<<endl;
+    cout<<"\\begin{center}"<<endl;
+    cout<<"\\begin{tabular}{c|c|c|c|c|c} \\\\"<<endl;
+    cout<<"Region & Sherpa & Sherpa & Powheg & Powheg & \\% \\\\"<<endl;
+    cout<<"& Events/fb$^{-1}$ & Events & Events/fb$^{-1}$ & Events & Difference \\\\"<<endl;
+    cout<<"\\hline"<<endl;
+    cout<<"\\hline"<<endl;
+    cout<<"\\multicolumn{6}{c}{WZ Samples} \\\\"<<endl;
+    cout<<"\\hline"<<endl;
+    cout<<"VRWZ & "<<SigFig(VRWZ[0]/luminosity*1000, precision)<<" & "<<SigFig(VRWZ[0], precision)<<" & "<<SigFig(VRWZ[1]/luminosity*1000, precision)<<" & "<<SigFig(VRWZ[1], precision)<<" & "<<SigFig(abs(VRWZ[0]-VRWZ[1])/VRWZ[0]*100, precision)<<" \\\\"<<endl;
+    cout<<"VRZZ & "<<SigFig(VRZZ[0]/luminosity*1000, precision)<<" & "<<SigFig(VRZZ[0], precision)<<" & "<<SigFig(VRZZ[1]/luminosity*1000, precision)<<" & "<<SigFig(VRZZ[1], precision)<<" & "<<SigFig(abs(VRZZ[0]-VRZZ[1])/VRZZ[0]*100, precision)<<" \\\\"<<endl;
+    cout<<"VR3L & "<<SigFig(VR3L[0]/luminosity*1000, precision)<<" & "<<SigFig(VR3L[0], precision)<<" & "<<SigFig(VR3L[1]/luminosity*1000, precision)<<" & "<<SigFig(VR3L[1], precision)<<" & "<<SigFig(abs(VR3L[0]-VR3L[1])/VR3L[0]*100, precision)<<" \\\\"<<endl;
+    cout<<"\\hline"<<endl;
+    cout<<"\\multicolumn{6}{c}{WW/ZZ$\\rightarrow$llvv Samples} \\\\"<<endl;
+    cout<<"\\hline"<<endl;
+    cout<<"VRWZ & "<<SigFig(VRWZ[2]/luminosity*1000, precision)<<" & "<<SigFig(VRWZ[2], precision)<<" & "<<SigFig(VRWZ[3]/luminosity*1000, precision)<<" & "<<SigFig(VRWZ[3], precision)<<" & "<<SigFig(abs(VRWZ[2]-VRWZ[3])/VRWZ[2]*100, precision)<<" \\\\"<<endl;
+    cout<<"VRZZ & "<<SigFig(VRZZ[2]/luminosity*1000, precision)<<" & "<<SigFig(VRZZ[2], precision)<<" & "<<SigFig(VRZZ[3]/luminosity*1000, precision)<<" & "<<SigFig(VRZZ[3], precision)<<" & "<<SigFig(abs(VRZZ[2]-VRZZ[3])/VRZZ[2]*100, precision)<<" \\\\"<<endl;
+    cout<<"VR3L & "<<SigFig(VR3L[2]/luminosity*1000, precision)<<" & "<<SigFig(VR3L[2], precision)<<" & "<<SigFig(VR3L[3]/luminosity*1000, precision)<<" & "<<SigFig(VR3L[3], precision)<<" & "<<SigFig(abs(VR3L[2]-VR3L[3])/VR3L[2]*100, precision)<<" \\\\"<<endl;
+    cout<<"\\hline"<<endl;
+    cout<<"\\multicolumn{6}{c}{ZZ$\\rightarrow$llll Samples} \\\\"<<endl;
+    cout<<"\\hline"<<endl;
+    cout<<"VRWZ & "<<SigFig(VRWZ[4]/luminosity*1000, precision)<<" & "<<SigFig(VRWZ[4], precision)<<" & "<<SigFig(VRWZ[5]/luminosity*1000, precision)<<" & "<<SigFig(VRWZ[5], precision)<<" & "<<SigFig(abs(VRWZ[4]-VRWZ[5])/VRWZ[4]*100, precision)<<" \\\\"<<endl;
+    cout<<"VRZZ & "<<SigFig(VRZZ[4]/luminosity*1000, precision)<<" & "<<SigFig(VRZZ[4], precision)<<" & "<<SigFig(VRZZ[5]/luminosity*1000, precision)<<" & "<<SigFig(VRZZ[5], precision)<<" & "<<SigFig(abs(VRZZ[4]-VRZZ[5])/VRZZ[4]*100, precision)<<" \\\\"<<endl;
+    cout<<"VR3L & "<<SigFig(VR3L[4]/luminosity*1000, precision)<<" & "<<SigFig(VR3L[4], precision)<<" & "<<SigFig(VR3L[5]/luminosity*1000, precision)<<" & "<<SigFig(VR3L[5], precision)<<" & "<<SigFig(abs(VR3L[4]-VR3L[5])/VR3L[4]*100, precision)<<" \\\\"<<endl;
+    cout<<"\\hline"<<endl;
+    cout<<"\\end{tabular}"<<endl;
+    cout<<"\\end{center}"<<endl;
+    cout<<"\\caption{Comparison of yields in VRWZ, VRZZ, and VR3L in Sherpa and Powheg diboson MC.}"<<endl;
+    cout<<"\\label{table:Diboson_powhegsherpa}"<<endl;
+    cout<<"\\end{table}"<<endl;
+}
+
+void SherpaPowhegSystematic() {
+
+    // Options
+
+    MCPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/v1_02/MC/";
+    dataPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/v1_02/Data/";
+    saveDirectory = "/afs/cern.ch/user/m/mazhang/Plots/SherpaPowhegSystematic/";
+    saveImage = false;
+    blinded = false;
+
+    SetLuminosity(14700);
+
+    DefineSampleGroups();
+    DefineWeightsAndRegions();
+
+    Group PowhegWWZZ ("Powheg WW/ZZ");
+    PowhegWWZZ.AddSample("361604");
+    PowhegWWZZ.AddSample("361600");
+
+    // Get numbers
+
+    vector<double> onZYields = {0,0,0,0}, offZYields = {0,0,0,0};
+
+    vector<TCut> regionCut = {SRZ, VRZ, CRT, VRT};
+
+    for (int cutn=0; cutn<regionCut.size(); cutn++) {
+        TCut thisRegion = regionCut[cutn];
+        AddGroup(SherpaWZ);
+        AddGroup(SherpaVV);
+        AddGroup(PowhegWZ);
+        AddGroup(PowhegWWZZ);
+        Plot* newPlot = AddPlot("mll", to_TCut(to_TString(luminosity/1000.)+"*weight1fb") * thisRegion);
+        newPlot->SetBins(50, 0, 1000);
+        dataTables yieldsAndErrors = MakePlot(true);
+        auto yields = yieldsAndErrors.first;
+        auto errors = yieldsAndErrors.second;
+        if (cutn<=1) {
+            for (int i=0; i<onZYields.size(); i++) {
+                onZYields[i] = onZYields[i]+yields[i][0];
+                //onZErrors[i] = sqrt(pow(onZErrors[i],2)+pow(errors[i][cutn],2));
+            }
+        }
+        else {
+            for (int i=0; i<offZYields.size(); i++) {
+                offZYields[i] = offZYields[i]+yields[i][0];
+                //offZErrors[i] = sqrt(pow(offZErrors[i],2)+pow(errors[i][cutn],2));
+            }
+        }
+    }
+
+    int precision = 3;
+
+    cout<<"\\begin{table}"<<endl;
+    cout<<"\\begin{center}"<<endl;
+    cout<<"\\begin{tabular}{c|c|c|c|c|c} \\\\"<<endl;
+    cout<<"Region & Sherpa & Sherpa & Powheg & Powheg & \\% \\\\"<<endl;
+    cout<<"& Events/fb$^{-1}$ & Events & Events/fb$^{-1}$ & Events & Difference \\\\"<<endl;
+    cout<<"\\hline"<<endl;
+    cout<<"\\hline"<<endl;
+    cout<<"\\multicolumn{6}{c}{WZ Samples} \\\\"<<endl;
+    cout<<"\\hline"<<endl;
+    cout<<"SRZ+VRZ & "<<SigFig(onZYields[0]/luminosity*1000, precision)<<" & "<<SigFig(onZYields[0], precision)<<" & "<<SigFig(onZYields[2]/luminosity*1000, precision)<<" & "<<SigFig(onZYields[2], precision)<<" & "<<SigFig(abs(onZYields[0]-onZYields[2])/onZYields[0]*100, precision)<<" \\\\"<<endl;
+    cout<<"CRT+VRT & "<<SigFig(offZYields[0]/luminosity*1000, precision)<<" & "<<SigFig(offZYields[0], precision)<<" & "<<SigFig(offZYields[2]/luminosity*1000, precision)<<" & "<<SigFig(offZYields[2], precision)<<" & "<<SigFig(abs(offZYields[0]-offZYields[2])/offZYields[0]*100, precision)<<" \\\\"<<endl;
+
+    regionCut = {EdgeVRLow, EdgeVRMed, EdgeVRHigh};
+    vector<TString> regionName = {"EdgeVRLow", "EdgeVRMed", "EdgeVRHigh"};
+
+    for (int cutn=0; cutn<regionCut.size(); cutn++) {
+        TCut thisRegion = regionCut[cutn];
+        TString thisRegionName = regionName[cutn];
+        AddGroup(SherpaWZ);
+        AddGroup(SherpaVV);
+        AddGroup(PowhegWZ);
+        AddGroup(PowhegWWZZ);
+        Plot* newPlot = AddPlot("mll", to_TCut(to_TString(luminosity/1000.)+"*weight1fb") * thisRegion);
+        newPlot->SetBins(50, 0, 1000);
+        dataTables yieldsAndErrors = MakePlot(true);
+        auto yields = yieldsAndErrors.first;
+        auto errors = yieldsAndErrors.second;
+        cout<<thisRegionName<<" & "<<SigFig(yields[0][0]/luminosity*1000, precision)<<" & "<<SigFig(yields[0][0], precision)<<" & "<<SigFig(yields[2][0]/luminosity*1000, precision)<<" & "<<SigFig(yields[2][0], precision)<<" & "<<SigFig(abs(yields[0][0]-yields[2][0])/yields[0][0]*100, precision)<<" \\\\"<<endl;
+    }
+
+    cout<<"\\hline"<<endl;
+    cout<<"\\multicolumn{6}{c}{WW/ZZ Samples} \\\\"<<endl;
+    cout<<"\\hline"<<endl;
+    cout<<"SRZ+VRZ & "<<SigFig(onZYields[1]/luminosity*1000, precision)<<" & "<<SigFig(onZYields[1], precision)<<" & "<<SigFig(onZYields[3]/luminosity*1000, precision)<<" & "<<SigFig(onZYields[3], precision)<<" & "<<SigFig(abs(onZYields[1]-onZYields[3])/onZYields[1]*111, precision)<<" \\\\"<<endl;
+    cout<<"CRT+VRT & "<<SigFig(offZYields[1]/luminosity*1000, precision)<<" & "<<SigFig(offZYields[1], precision)<<" & "<<SigFig(offZYields[3]/luminosity*1000, precision)<<" & "<<SigFig(offZYields[3], precision)<<" & "<<SigFig(abs(offZYields[1]-offZYields[3])/offZYields[1]*111, precision)<<" \\\\"<<endl;
+
+    for (int cutn=0; cutn<regionCut.size(); cutn++) {
+        TCut thisRegion = regionCut[cutn];
+        TString thisRegionName = regionName[cutn];
+        AddGroup(SherpaWZ);
+        AddGroup(SherpaVV);
+        AddGroup(PowhegWZ);
+        AddGroup(PowhegWWZZ);
+        Plot* newPlot = AddPlot("mll", to_TCut(to_TString(luminosity/1000.)+"*weight1fb") * thisRegion);
+        newPlot->SetBins(50, 0, 1000);
+        dataTables yieldsAndErrors = MakePlot(true);
+        auto yields = yieldsAndErrors.first;
+        auto errors = yieldsAndErrors.second;
+        cout<<thisRegionName<<" & "<<SigFig(yields[1][0]/luminosity*1000, precision)<<" & "<<SigFig(yields[1][0], precision)<<" & "<<SigFig(yields[3][0]/luminosity*1000, precision)<<" & "<<SigFig(yields[3][0], precision)<<" & "<<SigFig(abs(yields[1][0]-yields[3][0])/yields[1][0]*100, precision)<<" \\\\"<<endl;
+    }
+
+    cout<<"\\hline"<<endl;
+    cout<<"\\end{tabular}"<<endl;
+    cout<<"\\end{center}"<<endl;
+    cout<<"\\caption{Comparison of yields in on-$Z$, off-$Z$, and Edge VR regions in Sherpa and Powheg diboson MC.}"<<endl;
+    cout<<"\\label{table:Diboson_powhegsherpa}"<<endl;
+    cout<<"\\end{table}"<<endl;
+}
+
+void MCRegionYieldsTable() {
+
+    // Options
+
+    MCPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/v1_02/MCDibosons/";
+    dataPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/v1_02/MCDibosons/";
+    saveDirectory = "/afs/cern.ch/user/m/mazhang/Plots/RegionYields/";
+    saveImage = false;
+    blinded = false;
+
+    SetLuminosity(14700);
+    //SetLuminosity(3214);
+    //SetLuminosity(11476);
+
+    DefineSampleGroups();
+    DefineWeightsAndRegions();
+
+    vector<TCut> regionCut = {EdgeSRLow, EdgeSRMed, EdgeSRHigh, EdgeVRLow, EdgeVRMed, EdgeVRHigh, SRZ, CRT, VRT, VRS};
+	vector<TCut> DFRegionCut = {EdgeCRTLow, EdgeCRTMed, EdgeCRTHigh, EdgeVRTLow, EdgeVRTMed, EdgeVRTHigh, SRZ_DF, CRT_DF, VRT_DF, VRS_DF};
+    vector<TString> regionName = {"SR Low", "SR Med", "SR High", "VR Low", "VR Med", "VR High", "SRZ", "CRT", "VRT", "VRS"};
+
+    Group data2015 ("Data 2015");
+    data2015.AddSample("data_2015");
+    data2015.isData = true;
+    Group data2016 ("Data 2016");
+    data2016.AddSample("data_2016");
+    data2016.isData = true;
+
+    dataTable emptyTable = {{},{},{},{}};
+    dataTables emptyTables = std::make_pair(emptyTable, emptyTable);
+    dataTables eeTables=emptyTables, mmTables=emptyTables, DFTables=emptyTables, totalTables=emptyTables;
+
+    cout<<"\\begin{table}[hbt]"<<endl;
+    cout<<"\\centering"<<endl;
+    cout<<"\\caption{Expected number of weighted events at $"<<luminosity/1000.<<"~\\mathrm{fb}^{-1}$ for rare top and Sherpa diboson MC in various signal regions. The number of $ZZ$ events in each region is obtained by subtracting the number of opposite-flavor $VV$ events from the number of same-flavor events. This method is not applicable for the $WZ$ or rare top estimation, so the DF events for these regions are grayed out in the table. Final expected numbers in each region are shown at the bottom of the table. The uncertainties given here are statistical only. Expected MC yields are shown against observed 2015+2016 data.}"<<endl;
+    cout<<"\\begin{tabular}{l|c|c|c|c} \\\\"<<endl;
+
+    for (int channelCount=0; channelCount<=3; channelCount++) {
+
+        if (channelCount==0)
+            cout<<"$\\mu\\mu$ & $WZ$ & $VV$ & Rare Top & Data \\\\"<<endl;
+        else if (channelCount==1)
+            cout<<"ee & $WZ$ & $VV$ & Rare Top & Data \\\\"<<endl;
+        else if (channelCount==2)
+            cout<<"DF & $WZ$ & $VV$ & Rare Top & Data \\\\"<<endl;
+        else if (channelCount==3)
+            cout<<"Total & $WZ$ & $ZZ$ ($VV_{SF}$-$VV_{DF}$) & Rare Top & Data \\\\"<<endl;
+        cout<<"\\hline"<<endl;
+
+        for (int cutn=0; cutn<regionCut.size(); cutn++) {
+
+            cout<<regionName[cutn];
+
+            TCut thisRegion = regionCut[cutn];
+            TCut thisDFRegion = DFRegionCut[cutn];
+
+            data.SetCustomWeight(to_TCut("(channel=="+to_TString(channelCount)+")") * thisRegion);
+            data2015.SetCustomWeight(to_TCut("(channel=="+to_TString(channelCount)+")") * thisRegion);
+            data2016.SetCustomWeight(to_TCut("(channel=="+to_TString(channelCount)+")") * thisRegion);
+            if (channelCount==2) {
+                data.SetCustomWeight(to_TCut("(channel>=2)") * thisDFRegion);
+                data2015.SetCustomWeight(to_TCut("(channel>=2)") * thisDFRegion);
+                data2016.SetCustomWeight(to_TCut("(channel>=2)") * thisDFRegion);
+            }
+
+            AddGroup(SherpaWZ);
+            AddGroup(SherpaVV);
+            AddGroup(rareTop);
+            AddGroup(data);
+            //AddGroup(data2015);
+            //AddGroup(data2016);
+
+            if (channelCount<2) {
+                Plot* newPlot = AddPlot("mll", to_TCut(to_TString(luminosity/1000.)+"*weight1fb*(channel=="+to_TString(channelCount)+")") * (thisRegion));
+                //Plot* newPlot = AddPlot("mll", to_TCut(to_TString(luminosity/1000.)+"*weight1fb*(channel=="+to_TString(channelCount)+")") * (thisRegion + TCut("Year==2015")));
+                //Plot* newPlot = AddPlot("mll", to_TCut(to_TString(luminosity/1000.)+"*weight1fb*(channel=="+to_TString(channelCount)+")") * (thisRegion + TCut("Year==2016")));
+                newPlot->SetBins(25, 0, 2500);
+                newPlot->SetLog(true);
+            }
+            else if (channelCount==2) {
+                Plot* newPlot = AddPlot("mll", to_TCut(to_TString(luminosity/1000.)+"*weight1fb*(channel>=2)") * (thisDFRegion));
+                //Plot* newPlot = AddPlot("mll", to_TCut(to_TString(luminosity/1000.)+"*weight1fb*(channel>=2)") * (thisDFRegion + TCut("Year==2015")));
+                //Plot* newPlot = AddPlot("mll", to_TCut(to_TString(luminosity/1000.)+"*weight1fb*(channel>=2)") * (thisDFRegion + TCut("Year==2016")));
+                newPlot->SetBins(25, 0, 2500);
+                newPlot->SetLog(true);
+            }
+
+            dataTables yieldsAndErrors;
+            if (channelCount<3) {
+                yieldsAndErrors = MakePlot(true);
+                dataTable part1, part3;
+                auto part2 = yieldsAndErrors.first;
+                auto part4 = yieldsAndErrors.second;
+                if (channelCount==0) {
+                    part1 = mmTables.first;
+                    part3 = mmTables.second;
+                }
+                else if (channelCount==1) {
+                    part1 = eeTables.first;
+                    part3 = eeTables.second;
+                }
+                else if (channelCount==2) {
+                    part1 = DFTables.first;
+                    part3 = DFTables.second;
+                }
+                for (int group=0; group<yieldsAndErrors.first.size(); group++) {
+                    part1[group].insert(part1[group].end(),part2[group].begin(),part2[group].end());
+                    part3[group].insert(part3[group].end(),part4[group].begin(),part4[group].end());
+                }
+                if (channelCount==0) {
+                    mmTables.first = part1;
+                    mmTables.second = part3;
+                }
+                else if (channelCount==1) {
+                    eeTables.first = part1;
+                    eeTables.second = part3;
+                }
+                else if (channelCount==2) {
+                    DFTables.first = part1;
+                    DFTables.second = part3;
+                }
+            }
+            else {
+                dataTable yields = {}, errors = {};
+                for (int i=0; i<eeTables.first.size(); i++) {
+                    vector<double> yield = {eeTables.first[i][cutn]+mmTables.first[i][cutn]};
+                    vector<double> error = {sqrt(pow(eeTables.second[i][cutn],2) + pow(mmTables.second[i][cutn],2))};
+                    if (i==1) {
+                        yield = {eeTables.first[i][cutn]+mmTables.first[i][cutn]-DFTables.first[i][cutn]};
+                        error = {sqrt(pow(DFTables.second[i][cutn],2) + pow(eeTables.second[i][cutn],2) + pow(mmTables.second[i][cutn],2))};
+                    }
+                    yields.push_back(yield);
+                    errors.push_back(error);
+                }
+                yieldsAndErrors.first = yields;
+                yieldsAndErrors.second = errors;
+            }
+
+            std::cout << std::fixed;
+            dataTable yields = yieldsAndErrors.first;
+            dataTable errors = yieldsAndErrors.second;
+
+            for (int i=0; i<yields.size(); i++) {
+                for (int j=0; j<yields[i].size(); j++) {
+
+                    double integral = yields[i][j];
+                    double error = errors[i][j];
+
+                    int precision = 2;
+
+                    if (i==3) {
+                        if (channelCount==2)
+                            cout<<setprecision(0)<<" & \\cellcolor{gray}$"<<integral<<"$";
+                        else
+                            cout<<setprecision(0)<<" & $"<<integral<<"$";
+                    }
+                    else {
+                        if (channelCount==2 && i!=1)
+                            cout<<setprecision(precision)<<" & \\cellcolor{gray}$"<<integral<<"\\pm"<<error<<"$";
+                        else
+                            cout<<setprecision(precision)<<" & $"<<integral<<"\\pm"<<error<<"$";
+                    }
+                }
+            }
+
+            cout<<" \\\\"<<endl;
+        }
+
+        if (channelCount==3) {
+            cout<<"\\end{tabular}"<<endl;
+            cout<<"\\label{table:regionYields}"<<endl;
+            cout<<"\\end{table}"<<endl;
+        }
+        else
+            cout<<"\\hline\n\\hline"<<endl;
+    }
+}
+
+void DibosonSystematics() {
+
+    // Options
+
+    MCPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/v1_02/SysMC/";
+    dataPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/v1_02/Data/";
+    saveDirectory = "/afs/cern.ch/user/m/mazhang/Plots/Systematics/";
+    saveImage = false;
+    blinded = false;
+
+    SetLuminosity(14700);
+
+    DefineSampleGroups();
+    DefineWeightsAndRegions();
+
+    // Create plots
+    
+    vector<string> treeRoots = {"EG_RESOLUTION_ALL", "EG_SCALE_ALL", "JET_GroupedNP_1", "JET_GroupedNP_2", "JET_GroupedNP_3", "JET_EtaIntercalibration_NonClosure", "MUONS_ID", "MUONS_MS", "MUONS_SCALE", "PH_EFF_ID_Uncertainty", "PH_EFF_TRKISO_Uncertainty"};
+    vector<pair<string, string>> treePairs = {};
+    for (int i=0; i<treeRoots.size(); i++) {
+        pair<string, string> newPair = make_pair("outputTree_" + treeRoots[i] + "__1up", "outputTree_" + treeRoots[i] + "__1down");
+        treePairs.push_back(newPair);
+    }
+    pair<string, string> newPair = make_pair("outputTree_MET_SoftTrk_ResoPara", "outputTree_MET_SoftTrk_ResoPerp");
+    treePairs.push_back(newPair);
+    newPair = make_pair("outputTree_MET_SoftTrk_ScaleDown", "outputTree_MET_SoftTrk_ScaleUp");
+    treePairs.push_back(newPair);
+    newPair = make_pair("outputTree_JvtEfficiencyDown", "outputTree_JvtEfficiencyUp");
+    treePairs.push_back(newPair);
+    newPair = make_pair("outputTree_JET_JER_SINGLE_NP__1up", "outputTree");
+    treePairs.push_back(newPair);
+
+    cout<<"\\begin{sidewaystable}[hbt]"<<endl;
+    cout<<"\\centering"<<endl;
+    cout<<"\\caption{Calculated and total uncertainties (absolute) for diboson and rare top samples in SRLow, SRMed, and SRHigh. All systematic, cross section, and theory uncertainties are listed here. ZZ here refers to $ZZ \\rightarrow llvv$, and is calculated by subtracting the different-flavor component of $VV \\rightarrow llvv$ samples from the same-flavor component. This is described more in Section~\\ref{sec:diboson} and Appendix~\\ref{app:VVsyst}.}"<<endl;
+    cout<<"\\resizebox{\\textheight}{!}{"<<endl;
+    cout<<"\\begin{tabular}{ l | l | l | l | l | l | l | l | l | l }"<<endl;
+    cout<<"Source & SRLow WZ & SRLow ZZ & SRLow Rare Top & SRMed WZ & SRMed ZZ & SRMed RT & SRHigh WZ & SRHigh ZZ & SRHigh RT \\\\"<<endl;
+    cout<<"\\hline"<<endl;
+
+    //vector<TCut> regionCut = {EdgeSRLow, EdgeSRMed, EdgeSRHigh, EdgeVRLow, EdgeVRMed, EdgeVRHigh, VR3L};
+    //vector<TCut> DFRegionCut = {EdgeCRTLow, EdgeCRTMed, EdgeCRTHigh, EdgeVRTLow, EdgeVRTMed, EdgeVRTHigh, VR3LDF};
+    //vector<TString> regionName = {"EdgeSRLow", "EdgeSRMed", "EdgeSRHigh", "EdgeVRLow", "EdgeVRMed", "EdgeVRHigh", "VR 3L"};
+    vector<TCut> regionCut = {EdgeSRLow, EdgeSRMed, EdgeSRHigh};
+    vector<TCut> DFRegionCut = {EdgeCRTLow, EdgeCRTMed, EdgeCRTHigh};
+    vector<TString> regionName = {"EdgeSRLow", "EdgeSRMed", "EdgeSRHigh"};
+    //vector<TCut> regionCut = {EdgeVRLow, EdgeVRMed, EdgeVRHigh};
+    //vector<TCut> DFRegionCut = {EdgeVRTLow, EdgeVRTMed, EdgeVRTHigh};
+    //vector<TString> regionName = {"EdgeVRLow", "EdgeVRMed", "EdgeVRHigh"};
+
+    TCut weight1fb = "1000.0 * sampleWeight * eventWeight * lep_weight[0] * lep_weight[1] / nGenEvents";
+    TCut weight = to_TCut(to_TString(luminosity/1000.)) * weight1fb;
+
+    Group SherpaVVSF = SherpaVV;
+    SherpaVVSF.SetName("Sherpa VV SF");
+    Group SherpaVVDF = SherpaVV;
+    SherpaVVDF.SetName("Sherpa VV DF");
+
+    // Default yields - has to be done this way, unfortunately
+    vector<dataTables> defaultYieldsAndErrors = {};
+    for (int cutn=0; cutn<regionCut.size(); cutn++) {
+
+        TCut thisRegion = regionCut[cutn];
+        TCut thisDFRegion = DFRegionCut[cutn];
+        SherpaVVDF.SetCustomWeight(thisDFRegion * weight);
+
+        AddGroup(SherpaWZ);
+        AddGroup(SherpaVVSF);
+        AddGroup(SherpaVVDF);
+        AddGroup(rareTop);
+        SetTree("outputTree");
+        Plot* newPlot = AddPlot("mll", weight * thisRegion);
+        newPlot->SetBins(50, 0, 1000);
+        dataTables yieldsAndErrors = MakePlot(true);
+        defaultYieldsAndErrors.push_back(yieldsAndErrors);
+    }
+
+    vector<float> totalSysts(regionCut.size()*3, 0);
+
+    for (int treen=0; treen<treePairs.size(); treen++) {
+
+        string treeRoot;
+        if (treen < treeRoots.size())
+            treeRoot = treeRoots[treen];
+        else
+            treeRoot = treePairs[treen].first;
+        findReplace(treeRoot,"_","\\_");
+        cout<<treeRoot;
+
+        for (int cutn=0; cutn<regionCut.size(); cutn++) {
+
+            TCut thisRegion = regionCut[cutn];
+            TCut thisDFRegion = DFRegionCut[cutn];
+            SherpaVVDF.SetCustomWeight(thisDFRegion * weight);
+
+            AddGroup(SherpaWZ);
+            AddGroup(SherpaVVSF);
+            AddGroup(SherpaVVDF);
+            AddGroup(rareTop);
+            string treeName = treePairs[treen].first;
+            SetTree(treeName);
+            Plot* firstPlot = AddPlot("mll", weight * thisRegion);
+            firstPlot->SetBins(50, 0, 1000);
+            dataTables firstYieldsAndErrors = MakePlot(true);
+            auto firstYields = firstYieldsAndErrors.first;
+        cout<<endl;
+        cout<<"\033[1;31m"<<firstYields[0][0]<<" & ";
+        cout<<firstYields[1][0]-firstYields[2][0]<<" & ";
+        cout<<firstYields[3][0]<<"\033[0m"<<endl;
+            auto firstErrors = firstYieldsAndErrors.second;
+
+            AddGroup(SherpaWZ);
+            AddGroup(SherpaVVSF);
+            AddGroup(SherpaVVDF);
+            AddGroup(rareTop);
+            treeName = treePairs[treen].second;
+            SetTree(treeName);
+            Plot* secondPlot = AddPlot("mll", weight * thisRegion);
+            secondPlot->SetBins(50, 0, 1000);
+            dataTables secondYieldsAndErrors = MakePlot(true);
+            auto secondYields = secondYieldsAndErrors.first;
+        cout<<"\033[1;31m"<<secondYields[0][0]<<" & ";
+        cout<<secondYields[1][0]-secondYields[2][0]<<" & ";
+        cout<<secondYields[3][0]<<"\033[0m"<<endl;
+            auto secondErrors = secondYieldsAndErrors.second;
+
+            auto defaultYields = defaultYieldsAndErrors[cutn].first;
+
+            float WZ = max(abs(firstYields[0][0] - defaultYields[0][0]), abs(secondYields[0][0] - defaultYields[0][0]));
+            totalSysts[cutn*3] += pow(WZ, 2);
+            cout<<" & "<<SigFig(WZ, 2);
+
+            float ZZ = max(abs(firstYields[1][0] - firstYields[2][0] - defaultYields[1][0] + defaultYields[2][0]), abs(secondYields[1][0] - secondYields[2][0] - defaultYields[1][0] + defaultYields[2][0]));
+            totalSysts[cutn*3 + 1] += pow(ZZ, 2);
+            cout<<" & "<<SigFig(ZZ, 2);
+
+            float RT = max(abs(firstYields[3][0] - defaultYields[3][0]), abs(secondYields[3][0] - defaultYields[3][0]));
+            totalSysts[cutn*3 + 2] += pow(RT, 2);
+            cout<<" & "<<SigFig(RT, 2);
+        }
+
+        cout<<" \\\\"<<endl;
+    }
+
+    //trigger weight & 0.27 & 0.10 & 0.11 & 0.09 & 0.06 & 0.04 & 0.04 & 0.06 & 0.02 \\
+    xSec Uncertainty (6\% for diboson, 13\% for rare top) & 0.54 & 0.38 & 0.50 & 0.17 & 0.07 & 0.17 & 0.08 & 0.03 & 0.11 \\
+    additional ttZ xSec Uncertainty (22\%) & - & - & 0.85 & - & - & 0.28 & - & - & 0.18 \\
+    pdf & 0.20 & 0.68 & - & 0.08 & 0.31 & - & 0.06 & 0.18 & - \\
+    qsf & 0.36 & 0.70 & - & 0.14 & 0.15 & - & 0.12 & 0.05 & - \\
+    renorm & 1.81 & 1.02 & - & 0.58 & 0.26 & - & 0.31 & 0.04 & - \\
+    fac & 0.09 & 0.06 & - & 0.03 & 0.02 & - & 0.03 & 0.02 & - \\
+    Sherpa - Powheg & 2.44 & 3.50 & - & 0.75 & 0.79 & - & 0.44 & 0.47 & - \\
+    VV Subtraction & - & 1.07 & - & - & 0.29 & - & - & 0.33 & - \\//
+
+    cout<<"\\hline"<<endl;
+
+    cout<<"Total Uncertainty";
+    for (int i=0; i<totalSysts.size(); i++) {
+        totalSysts[i] = pow(totalSysts[i],0.5);
+        cout << " & " << SigFig(totalSysts[i],2);
+    }
+    cout<<" \\\\"<<endl;
+
+    cout<<"Total Yield";
+    vector<float> totalYields(regionCut.size()*3, 0);
+    for (int cutn=0; cutn<regionCut.size(); cutn++) {
+        auto defaultYields = defaultYieldsAndErrors[cutn].first;
+        cout << " & " << SigFig(defaultYields[0][0],2) << " & " << SigFig(defaultYields[1][0] - defaultYields[2][0],2) << " & " << SigFig(defaultYields[3][0],2);
+        totalYields[cutn*3] = defaultYields[0][0];
+        totalYields[cutn*3 + 1] = defaultYields[1][0] - defaultYields[2][0];
+        totalYields[cutn*3 + 2] = defaultYields[3][0];
+    }
+    cout<<" \\\\"<<endl;
+
+    cout<<"\\\% Uncertainty";
+    for (int i=0; i<totalSysts.size(); i++) {
+        cout << " & " << (int)(totalSysts[i]/totalYields[i]*100) << "\\\%";
+    }
+    cout<<" \\\\"<<endl;
+
+    cout<<"\\end{tabular}"<<endl;
+    cout<<"\\label{table:dibosonuncvaluesSR}"<<endl;
+    cout<<"\\\end{sidewaystable}"<<endl;
+}
+
+void DibosonRegionYields() {
+
+    // Options
+
+    MCPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/v1_02/MCDibosons/";
+    dataPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/v1_02/MCDibosons/";
+    saveDirectory = "/afs/cern.ch/user/m/mazhang/Plots/Dibosons2016/";
+    saveImage = true;
+    blinded = false;
+
+    SetLuminosity(14700);
+    //SetLuminosity(3214);
+    //SetLuminosity(11476);
+
+    DefineSampleGroups();
+    DefineWeightsAndRegions();
+
+    // Create plots
+    
+    vector<TCut> regionCut = {"VRWZ", "VRZZ", "VR3L", "VRS"};
+    //vector<TCut> regionCut = {"VRZZ"};
+    //vector<TCut> channelCut = {"channel==0", "channel==1", "channel==0 || channel==1", "channel==2 || channel==3", "1"};
+    vector<TCut> channelCut = {"1"};
+
+    TCut weight = to_TCut(to_TString(luminosity/1000.)+"*weight1fb");
+    //TCut weight = to_TCut(to_TString(luminosity/1000.)+"*weight1fb*pileupWeight");
+    
+    Group data2015 ("Data 2015");
+    data2015.AddSample("data_2015");
+    data2015.isData = true;
+    Group data2016 ("Data 2016");
+    data2016.AddSample("data_2016");
+    data2016.isData = true;
+
+    Group FS ("Flavor Symmetric");
+    Group WZZZ ("WZ/ZZ");
+    Group ZJets ("Z + Jets");
+
+    for (int i=361372; i<=361443; i++) {
+        if (i<=361395) {
+            ZJets.AddSample(i);
+        }
+        else if (i<=361419) {
+            ZJets.AddSample(i);
+        }
+        else {
+            FS.AddSample(i);
+        }
+    }
+
+    for (int i=361468; i<=361491; i++) { //DY
+        if (i<=361475)
+            ZJets.AddSample(i);
+        else if (i<=361483)
+            ZJets.AddSample(i);
+        //else
+        //Checkpoint - because 361484.root is not working right now
+        else if (i>=361485)
+            FS.AddSample(i);
+    }
+ 
+    FS.AddSample(410000);
+    vector<int> tW = {410015, 410016, 410064, 410065};
+    for (int i:tW) {
+        FS.AddSample(i);
+    }
+ 
+    FS.AddSample("361068");  //llvv
+    FS.AddSample("361077");  //llvv (gg)
+ 
+    for (int i=361064; i<=361067; i++) {
+        WZZZ.AddSample(i);
+    }
+ 
+    WZZZ.AddSample("361063");  //llll
+    WZZZ.AddSample("361073");  //llll (gg)
+
+    for (int channeln=0; channeln<channelCut.size(); channeln++) {
+
+        TCut thisChannel = channelCut[channeln];
+        cout<<thisChannel<<endl;
+
+        for (int cutn=0; cutn<regionCut.size(); cutn++) {
+
+            TCut thisRegion = regionCut[cutn];
+            cout<<endl<<thisRegion<<endl;
+
+            AddGroup(Zee);
+            AddGroup(Zmm);
+            AddGroup(Ztt);
+            AddGroup(ttbar);
+            AddGroup(rareTop);
+            AddGroup(SherpaVV);
+            AddGroup(SherpaZZ);
+            AddGroup(SherpaWZ);
+            
+            //AddGroup(FS);
+            //AddGroup(WZZZ);
+            //AddGroup(ZJets);
+            //AddGroup(rareTop);
+
+            data.SetCustomWeight(thisRegion + thisChannel);
+            data2015.SetCustomWeight(thisRegion + thisChannel);
+            data2016.SetCustomWeight(thisRegion + thisChannel);
+            AddGroup(data);
+            //AddGroup(data2015);
+            //AddGroup(data2016);
+            
+            //vector<TString> groupNames = {"Zee", "Zmm", "Ztt", "ttbar", "rareTop", "SherpaVV", "SherpaZZ", "SherpaWZ"};
+
+            SetTree("outputTree");
+            Plot* newPlot = AddPlot("mll", weight * (thisRegion + thisChannel), "mll");
+            //Plot* newPlot = AddPlot("mll", weight * (thisRegion + thisChannel + TCut("Year==2015")), "mll");
+            //Plot* newPlot = AddPlot("mll", weight * (thisRegion + thisChannel + TCut("Year==2016")), "mll");
+            newPlot->SetBins(50, 0, 1000);
+            dataTables yieldsAndErrors = MakePlot(true);
+            auto yields = yieldsAndErrors.first;
+            auto errors = yieldsAndErrors.second;
+
+            float sum = 0;
+            float sumErr = 0;
+
+            for (int i=0; i<yields.size()-1; i++) {
+                //cout << groupNames[i] << ": " << yields[i][0] << endl;
+                cout << groups[i].Name() << ": " << SigFig(yields[i][0],2) << " \\pm " << SigFig(errors[i][0],2) << endl;
+                sum += yields[i][0];
+                sumErr += pow(errors[i][0],2);
+            }
+            //cout<<"Total MC: "<<sum<<endl;
+            cout<<"Total MC: "<<SigFig(sum,2)<<" \\pm "<<SigFig(sqrt(sumErr),2)<<endl;
+
+            cout << "Data: " << SigFig(yields[yields.size()-1][0],2) << endl;
+        }
+
+        cout<<endl;
+    }
+}
+
+void DibosonVRPlots() {
+
+    // Options
+
+    MCPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/v1_02/DibosonRedo/";
+    dataPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/v1_02/DibosonRedo/";
+    saveDirectory = "/afs/cern.ch/user/m/mazhang/Plots/DibosonPlotsRecheck/";
+    saveImage = true;
+    //saveExtension = "root";
+    blinded = false;
+
+    SetLuminosity(14700);
+    //SetLuminosity(3214);
+    //SetLuminosity(11476);
+
+    DefineSampleGroups();
+    DefineWeightsAndRegions();
+
+    // Create plots
+    
+    //vector<TCut> channelCut = {"channel==0", "channel==1", "channel==0 || channel==1", "channel==2 || channel==3", "1"};
+    vector<TCut> channelCut = {"1"};
+
+    //TCut weight = to_TCut(to_TString(luminosity/1000.)+"*weight1fb*pileupWeight") * TCut("Year==2015");
+    //TCut weight = to_TCut(to_TString(luminosity/1000.)+"*weight1fb*pileupWeight") * TCut("Year==2016");
+    TCut weight = to_TCut(to_TString(luminosity/1000.)+"*weight1fb*pileupWeight");
+
+    Group data2015 ("Data 2015");
+    data2015.AddSample("data_2015");
+    data2015.isData = true;
+    Group data2016 ("Data 2016");
+    data2016.AddSample("data_2016");
+    data2016.isData = true;
+    Group dataAll ("Data 2015+2016");
+    dataAll.AddSample("data_14p7fb");
+    dataAll.isData = true;
+
+    for (int channeln=0; channeln<channelCut.size(); channeln++) {
+
+        TCut thisChannel = channelCut[channeln];
+        cout<<thisChannel<<endl;
+
+        //AddGroup(rareTop);
+        AddGroup(ttbar);
+        //AddGroup(SherpaVV);
+        //AddGroup(SherpaWZ);
+        //AddGroup(SherpaZZ);
+        //AddGroup(Ztt);
+        //AddGroup(Zmm);
+        //AddGroup(Zee);
+        dataAll.SetCustomWeight(TCut("VRWZ") + thisChannel);
+        data2015.SetCustomWeight(TCut("VRWZ") + thisChannel);
+        data2016.SetCustomWeight(TCut("VRWZ") + thisChannel);
+        AddGroup(dataAll);
+        //AddGroup(data2015);
+        //AddGroup(data2016);
+
+        SetTree("outputTree");
+        Plot* newPlot1 = AddPlot("WZ_WMass", weight * (TCut("VRWZ") + thisChannel), "WZ W Mass");
+        newPlot1->SetBins(15, 0, 200);
+        //Plot* newPlot2 = AddPlot("WZ_ZMass", weight * (TCut("VRWZ") + thisChannel), "WZ Z Mass");
+        //newPlot2->SetBins(15, 0, 200);
+        //Plot* newPlot5 = AddPlot("WZ_ZPt", weight * (TCut("VRWZ") + thisChannel), "WZ Z pT");
+        //newPlot5->SetBins(15, 0, 300);
+        //Plot* newPlot6 = AddPlot("WZ_WPt", weight * (TCut("VRWZ") + thisChannel), "WZ W pT");
+        //newPlot6->SetBins(15, 0, 300);
+        //Plot* newPlot7 = AddPlot("jet_n", weight * (TCut("VRWZ") + thisChannel), "WZ Jet Number");
+        //newPlot7->SetBins(8, 0, 8);
+        //Plot* newPlot9 = AddPlot("HT", weight * (TCut("VRWZ") + thisChannel), "WZ HT");
+        //newPlot9->SetBins(10, 0, 300);
+        //Plot* newPlot11 = AddPlot("HTincl", weight * (TCut("VRWZ") + thisChannel), "WZ HTincl");
+        //newPlot11->SetBins(15, 0, 800);
+        //MakePlot(true);
+        MakePlotAndPrintYields(true);
+
+        //AddGroup(rareTop);
+        AddGroup(ttbar);
+        //AddGroup(SherpaVV);
+        //AddGroup(SherpaWZ);
+        //AddGroup(SherpaZZ);
+        //AddGroup(Ztt);
+        //AddGroup(Zmm);
+        //AddGroup(Zee);
+        dataAll.SetCustomWeight(TCut("VRZZ") + thisChannel);
+        data2015.SetCustomWeight(TCut("VRZZ") + thisChannel);
+        data2016.SetCustomWeight(TCut("VRZZ") + thisChannel);
+        AddGroup(dataAll);
+        //AddGroup(data2015);
+        //AddGroup(data2016);
+        
+        //Plot* newPlot3 = AddPlot("ZZ_ZMass", weight * (TCut("VRZZ") + thisChannel), "ZZ Z Mass");
+        //newPlot3->SetBins(15, 0, 200);
+        //Plot* newPlot4 = AddPlot("ZZ_ZPt", weight * (TCut("VRZZ") + thisChannel), "ZZ Z pT");
+        //newPlot4->SetBins(15, 0, 300);
+        Plot* newPlot8 = AddPlot("jet_n", weight * (TCut("VRZZ") + thisChannel), "ZZ Jet Number");
+        newPlot8->SetBins(8, 0, 8);
+        //Plot* newPlot10 = AddPlot("HT", weight * (TCut("VRZZ") + thisChannel), "ZZ HT");
+        //newPlot10->SetBins(10, 0, 300);
+        //Plot* newPlot12 = AddPlot("HTincl", weight * (TCut("VRZZ") + thisChannel), "ZZ HTincl");
+        //newPlot12->SetBins(15, 0, 800);
+        //MakePlot(true);
+        MakePlotAndPrintYields(true);
+
+        //AddGroup(rareTop);
+        AddGroup(ttbar);
+        //AddGroup(SherpaVV);
+        //AddGroup(SherpaWZ);
+        //AddGroup(SherpaZZ);
+        //AddGroup(Ztt);
+        //AddGroup(Zmm);
+        //AddGroup(Zee);
+        dataAll.SetCustomWeight(VR3L + thisChannel);
+        data2015.SetCustomWeight(VR3L + thisChannel);
+        data2016.SetCustomWeight(VR3L + thisChannel);
+        AddGroup(dataAll);
+        //AddGroup(data2015);
+        //AddGroup(data2016);
+
+        Plot* newPlot13 = AddPlot("jet_n", weight * (VR3L + thisChannel), "3L Jet Number");
+        //MakePlot(true);
+        MakePlotAndPrintYields(true);
+    }
+}
+
+void TrackHistograms() {
+
+    // Options
+
+    MCPath = "/afs/cern.ch/user/m/mazhang/Projects/VertexReconstructionValidation/RunTruthMatch/Step1.2/";
+    dataPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/v1_02/MCDibosons/";
+    saveDirectory = "/afs/cern.ch/user/m/mazhang/Plots/Tracks/";
+    saveImage = false;
+    blinded = false;
+
+    Group Track_8209 ("8209");
+    Track_8209.AddSample("Tracks_8209");
+    Group Track_8210 ("8210");
+    Track_8210.AddSample("Tracks_8210");
+    Group Track_8211 ("8211");
+    Track_8211.AddSample("Tracks_8211");
+
+    // Create plots
+    
+    //vector<TString> plots = {"is_HS", "x", "y", "z", "d0", "z0", "phi", "eta",  "pT", "vtxX", "vtxY", "vtxZ", "dz0"};
+    //vector<vector<float>> bins = {{2,0,2}, {20,-0.1,0.1}, {20,-0.1,0.1}, {50,-300,300}, {100,-1,1}, {100,-300,300}, {50, 0, 4}, {50, -3.5, 3.5}, {100, 0, 50000}, {20,-0.1,0.1}, {20,-0.1,0.1}, {50,-300,300},{50, 0, 1}};
+
+    //vector<TString> plots = {"x", "y", "z"};
+    vector<TString> plots = {"d0", "z0", "dz0"};
+    vector<vector<float>> bins = {{20,-0.1,0.1}, {20,-0.1,0.1}, {50,-300,300}};
+
+    for (int plotn=0; plotn<plots.size(); plotn++) {
+
+        AddGroup(Track_8209);
+        AddGroup(Track_8210);
+        AddGroup(Track_8211);
+
+        SetTree("outputTree");
+        Plot* newPlot = AddPlot(plots[plotn], "phi!=0", plots[plotn]);
+        newPlot->SetBins(bins[plotn][0], bins[plotn][1], bins[plotn][2]);
+        MakePlot(false);
+    }
+}
+
+// Theory variations - fucked up results for some reason, same for each region - Do not use, bad bad bad
+void SampleYields() {
+
+    // Options
+
+    MCPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/v1_02/TheoryVariations/";
+    vector<string> samples = {"user.tholmes.mc15_13TeV.361063.Sherpa_CT10_llll.merge.DAOD_TRUTH1.e3836_p2436_ntupleOutput.root/user.tholmes.7464465._000002.ntupleOutput",
+	"user.tholmes.mc15_13TeV.361063.Sherpa_CT10_llll.merge.DAOD_TRUTH1.e3836_p2436_ntupleOutput.root/user.tholmes.7464465._000003.ntupleOutput",
+	"user.tholmes.mc15_13TeV.361064.Sherpa_CT10_lllvSFMinus.merge.DAOD_TRUTH1.e3836_p2436_ntupleOutput.root/user.tholmes.7464467._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.361064.Sherpa_CT10_lllvSFMinus.merge.DAOD_TRUTH1.e3836_p2436_ntupleOutput.root/user.tholmes.7464467._000003.ntupleOutput",
+	"user.tholmes.mc15_13TeV.361065.Sherpa_CT10_lllvOFMinus.merge.DAOD_TRUTH1.e3836_p2436_ntupleOutput.root/user.tholmes.7464470._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.361065.Sherpa_CT10_lllvOFMinus.merge.DAOD_TRUTH1.e3836_p2436_ntupleOutput.root/user.tholmes.7464470._000002.ntupleOutput",
+	"user.tholmes.mc15_13TeV.361066.Sherpa_CT10_lllvSFPlus.merge.DAOD_TRUTH1.e3836_p2436_ntupleOutput.root/user.tholmes.7464474._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.361066.Sherpa_CT10_lllvSFPlus.merge.DAOD_TRUTH1.e3836_p2436_ntupleOutput.root/user.tholmes.7464474._000002.ntupleOutput",
+	"user.tholmes.mc15_13TeV.361067.Sherpa_CT10_lllvOFPlus.merge.DAOD_TRUTH1.e3836_p2436_ntupleOutput.root/user.tholmes.7464477._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.361067.Sherpa_CT10_lllvOFPlus.merge.DAOD_TRUTH1.e3836_p2436_ntupleOutput.root/user.tholmes.7464477._000002.ntupleOutput",
+	"user.tholmes.mc15_13TeV.361068.Sherpa_CT10_llvv.merge.DAOD_TRUTH1.e3836_p2436_ntupleOutput.root/user.tholmes.7464480._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.361068.Sherpa_CT10_llvv.merge.DAOD_TRUTH1.e3836_p2436_ntupleOutput.root/user.tholmes.7464480._000002.ntupleOutput",
+	"user.tholmes.mc15_13TeV.361068.Sherpa_CT10_llvv.merge.DAOD_TRUTH1.e3836_p2436_ntupleOutput.root/user.tholmes.7464480._000003.ntupleOutput",
+	"user.tholmes.mc15_13TeV.361073.Sherpa_CT10_ggllll.merge.DAOD_TRUTH1.e3836_p2436_ntupleOutput.root/user.tholmes.7464492._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.361073.Sherpa_CT10_ggllll.merge.DAOD_TRUTH1.e3836_p2436_ntupleOutput.root/user.tholmes.7464492._000002.ntupleOutput",
+	"user.tholmes.mc15_13TeV.361077.Sherpa_CT10_ggllvv.merge.DAOD_TRUTH1.e3836_p2436_ntupleOutput.root/user.tholmes.7464485._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.361077.Sherpa_CT10_ggllvv.merge.DAOD_TRUTH1.e3836_p2436_ntupleOutput.root/user.tholmes.7464485._000002.ntupleOutput",
+	"user.tholmes.mc15_13TeV.361084.Sherpa_CT10_WqqZll.merge.DAOD_TRUTH1.e3836_p2436_ntupleOutput.root/user.tholmes.7464489._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.361086.Sherpa_CT10_ZqqZll.merge.DAOD_TRUTH1.e3926_p2436_ntupleOutput.root/user.tholmes.7464496._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363042.Sherpa_CT10_llll_fac4.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464648._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363042.Sherpa_CT10_llll_fac4.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464648._000002.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363043.Sherpa_CT10_llll_fac025.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464644._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363044.Sherpa_CT10_llll_renorm4.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464642._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363044.Sherpa_CT10_llll_renorm4.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464642._000002.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363045.Sherpa_CT10_llll_renorm025.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464639._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363045.Sherpa_CT10_llll_renorm025.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464639._000002.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363046.Sherpa_CT10_llll_qsf4.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464637._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363046.Sherpa_CT10_llll_qsf4.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464637._000002.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363047.Sherpa_CT10_llll_qsf025.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464633._000002.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363047.Sherpa_CT10_llll_qsf025.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464633._000003.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363048.Sherpa_CT10_lllvSFMinus_fac4.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464631._000002.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363049.Sherpa_CT10_lllvSFMinus_fac025.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464628._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363050.Sherpa_CT10_lllvSFMinus_renorm4.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464626._000002.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363051.Sherpa_CT10_lllvSFMinus_renorm025.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464623._000002.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363052.Sherpa_CT10_lllvSFMinus_qsf4.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464620._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363053.Sherpa_CT10_lllvSFMinus_qsf025.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464617._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363054.Sherpa_CT10_lllvOFMinus_fac4.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464614._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363055.Sherpa_CT10_lllvOFMinus_fac025.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464612._000002.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363056.Sherpa_CT10_lllvOFMinus_renorm4.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464609._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363057.Sherpa_CT10_lllvOFMinus_renorm025.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464605._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363058.Sherpa_CT10_lllvOFMinus_qsf4.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464603._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363060.Sherpa_CT10_lllvSFPlus_fac4.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464601._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363061.Sherpa_CT10_lllvSFPlus_fac025.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464599._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363062.Sherpa_CT10_lllvSFPlus_renorm4.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464595._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363063.Sherpa_CT10_lllvSFPlus_renorm025.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464592._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363064.Sherpa_CT10_lllvSFPlus_qsf4.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464587._000002.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363065.Sherpa_CT10_lllvSFPlus_qsf025.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464584._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363066.Sherpa_CT10_lllvOFPlus_fac4.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464581._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363067.Sherpa_CT10_lllvOFPlus_fac025.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464576._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363068.Sherpa_CT10_lllvOFPlus_renorm4.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464571._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363069.Sherpa_CT10_lllvOFPlus_renorm025.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464566._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363070.Sherpa_CT10_lllvOFPlus_qsf4.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464561._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363071.Sherpa_CT10_lllvOFPlus_qsf025.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464557._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363072.Sherpa_CT10_llvv_fac4.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464553._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363072.Sherpa_CT10_llvv_fac4.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464553._000002.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363073.Sherpa_CT10_llvv_fac025.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464550._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363073.Sherpa_CT10_llvv_fac025.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464550._000002.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363074.Sherpa_CT10_llvv_renorm4.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464548._000002.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363074.Sherpa_CT10_llvv_renorm4.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464548._000003.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363074.Sherpa_CT10_llvv_renorm4.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464548._000004.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363075.Sherpa_CT10_llvv_renorm025.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464546._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363075.Sherpa_CT10_llvv_renorm025.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464546._000002.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363076.Sherpa_CT10_llvv_qsf4.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464543._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363076.Sherpa_CT10_llvv_qsf4.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464543._000002.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363077.Sherpa_CT10_llvv_qsf025.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464540._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363077.Sherpa_CT10_llvv_qsf025.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464540._000002.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363077.Sherpa_CT10_llvv_qsf025.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464540._000003.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363078.Sherpa_CT10_ggllll_fac4.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464536._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363079.Sherpa_CT10_ggllll_fac025.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464533._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363080.Sherpa_CT10_ggllll_renorm4.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464530._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363081.Sherpa_CT10_ggllll_renorm025.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464526._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363082.Sherpa_CT10_ggllll_qsf4.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464523._000002.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363083.Sherpa_CT10_ggllll_qsf025.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464518._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363085.Sherpa_CT10_ggllvv_fac025.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464515._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363086.Sherpa_CT10_ggllvv_renorm4.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464511._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363087.Sherpa_CT10_ggllvv_renorm025.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464508._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363088.Sherpa_CT10_ggllvv_qsf4.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464503._000001.ntupleOutput",
+	"user.tholmes.mc15_13TeV.363089.Sherpa_CT10_ggllvv_qsf025.merge.DAOD_TRUTH1.e4681_p2482_ntupleOutput.root/user.tholmes.7464500._000001.ntupleOutput"};
+
+    std::map<int, int> nEvents;
+    nEvents[361063] = 2999000;
+    nEvents[361064] = 450000;
+    nEvents[361065] = 900000;
+    nEvents[361066] = 600000;
+    nEvents[361067] = 1200000;
+    nEvents[361068] = 5942000;
+    nEvents[361073] = 502000;
+    nEvents[361077] = 200000;
+    nEvents[361084] = 250000;
+    nEvents[361086] = 100000;
+    nEvents[363089] = 200000;
+    nEvents[363088] = 200000;
+    nEvents[363087] = 200000;
+    nEvents[363086] = 200000;
+    nEvents[363085] = 200000;
+    nEvents[363083] = 250000;
+    nEvents[363082] = 250000;
+    nEvents[363081] = 250000;
+    nEvents[363080] = 250000;
+    nEvents[363079] = 250000;
+    nEvents[363078] = 250000;
+    nEvents[363077] = 6000000;
+    nEvents[363076] = 6000000;
+    nEvents[363075] = 6000000;
+    nEvents[363074] = 6000000;
+    nEvents[363073] = 5999000;
+    nEvents[363072] = 6000000;
+    nEvents[363071] = 1200000;
+    nEvents[363070] = 1200000;
+    nEvents[363069] = 1200000;
+    nEvents[363068] = 1200000;
+    nEvents[363067] = 1200000;
+    nEvents[363066] = 1200000;
+    nEvents[363065] = 600000;
+    nEvents[363064] = 600000;
+    nEvents[363063] = 600000;
+    nEvents[363062] = 600000;
+    nEvents[363061] = 600000;
+    nEvents[363060] = 600000;
+    nEvents[363058] = 900000;
+    nEvents[363057] = 900000;
+    nEvents[363056] = 900000;
+    nEvents[363055] = 900000;
+    nEvents[363054] = 900000;
+    nEvents[363053] = 450000;
+    nEvents[363052] = 450000;
+    nEvents[363051] = 450000;
+    nEvents[363050] = 450000;
+    nEvents[363049] = 450000;
+    nEvents[363048] = 450000;
+    nEvents[363047] = 2498000;
+    nEvents[363046] = 2498800;
+    nEvents[363045] = 2500000;
+    nEvents[363044] = 2499800;
+    nEvents[363043] = 2500000;
+    nEvents[363042] = 2499800;
+
+    std::map<int, float> sampleWeight;
+    sampleWeight[361063] = 0.012849;
+    sampleWeight[361064] = 0.0018442;
+    sampleWeight[361065] = 0.0036254;
+    sampleWeight[361066] = 0.0025618;
+    sampleWeight[361067] = 0.0050248;
+    sampleWeight[361068] = 0.014;
+    sampleWeight[361073] = 0.000020931;
+    sampleWeight[361077] = 0.0008538;
+    sampleWeight[361084] = 0.0037583;
+    sampleWeight[361086] = 0.0023645727;
+    sampleWeight[363089] = 0.0011268;
+    sampleWeight[363088] = 0.00068964;
+    sampleWeight[363087] = 0.001164;
+    sampleWeight[363086] = 0.00065466;
+    sampleWeight[363085] = 0.00082018;
+    sampleWeight[363083] = 0.000026658;
+    sampleWeight[363082] = 0.000017048;
+    sampleWeight[363081] = 0.000028166;
+    sampleWeight[363080] = 0.000015917;
+    sampleWeight[363079] = 0.000019364;
+    sampleWeight[363078] = 0.000021838;
+    sampleWeight[363077] = 0.014377;
+    sampleWeight[363076] = 0.013912;
+    sampleWeight[363075] = 0.014391;
+    sampleWeight[363074] = 0.013461;
+    sampleWeight[363073] = 0.014054;
+    sampleWeight[363072] = 0.013972;
+    sampleWeight[363071] = 0.0051285;
+    sampleWeight[363070] = 0.0049774;
+    sampleWeight[363069] = 0.0055679;
+    sampleWeight[363068] = 0.0046719;
+    sampleWeight[363067] = 0.0051097;
+    sampleWeight[363066] = 0.0049003;
+    sampleWeight[363065] = 0.0026095;
+    sampleWeight[363064] = 0.0025286;
+    sampleWeight[363063] = 0.0028265;
+    sampleWeight[363062] = 0.0023688;
+    sampleWeight[363061] = 0.0026258;
+    sampleWeight[363060] = 0.0024854;
+    sampleWeight[363058] = 0.0035853;
+    sampleWeight[363057] = 0.0039994;
+    sampleWeight[363056] = 0.0033763;
+    sampleWeight[363055] = 0.0036815;
+    sampleWeight[363054] = 0.0035153;
+    sampleWeight[363053] = 0.0018813;
+    sampleWeight[363052] = 0.0018128;
+    sampleWeight[363051] = 0.0020374;
+    sampleWeight[363050] = 0.001714;
+    sampleWeight[363049] = 0.0018676;
+    sampleWeight[363048] = 0.0017919;
+    sampleWeight[363047] = 0.01246;
+    sampleWeight[363046] = 0.013065;
+    sampleWeight[363045] = 0.013097;
+    sampleWeight[363044] = 0.012644;
+    sampleWeight[363043] = 0.013082;
+    sampleWeight[363042] = 0.012025;
+
+    std::map<string, vector<int>> processes;
+
+    processes["VV"] = {361068, 361077};
+    processes["VV_fac4"] = {363072};
+    processes["VV_fac025"] = {363073, 363085};
+    processes["VV_renorm4"] = {363074, 363086};
+    processes["VV_renorm025"] = {363075, 363087};
+    processes["VV_qsf4"] = {363076, 363088};
+    processes["VV_qsf025"] = {363077, 363089};
+
+    processes["WZ"] = {361064, 361065, 361066, 361067};
+    processes["WZ_fac4"] = {363048, 363054, 363060, 363066};
+    processes["WZ_fac025"] = {363049, 363055, 363061, 363067};
+    processes["WZ_renorm4"] = {363050, 363056, 363062, 363068};
+    processes["WZ_renorm025"] = {363051, 363057, 363063, 363069};
+    processes["WZ_qsf4"] = {363052, 363058, 363064, 363070};
+    processes["WZ_qsf025"] = {363053, 363065, 363071};
+
+    processes["ZZ"] = {361063, 361073};
+    processes["ZZ_fac4"] = {363042, 363078};
+    processes["ZZ_fac025"] = {363043, 363079};
+    processes["ZZ_renorm4"] = {363044, 363080};
+    processes["ZZ_renorm025"] = {363045, 363081};
+    processes["ZZ_qsf4"] = {363046, 363082};
+    processes["ZZ_qsf025"] = {363047, 363083};
+
+    SetTree("ntupleOutput");
+
+    //vector<TCut> regionCut = {EdgeSRLow, EdgeSRMed, EdgeSRHigh};
+    //vector<TString> regionNames = {"SRLow", "SRMed", "SRHigh"};
+    vector<TCut> regionCut = {SRZ, VRS, CRT, VRT};
+    vector<TString> regionNames = {"SRZ", "VRS", "CRT", "VRT"};
+
+    for (int cutn=0; cutn<regionCut.size(); cutn++) {
+
+        TCut thisRegion = regionCut[cutn];
+        TString regionName = regionNames[cutn];
+        cout << regionName << endl;
+
+        std::map<int, float> yields;
+        std::map<string, float> totalYields;
+
+        for (auto sample:samples) {
+            TString sampleName = MCPath + sample;
+            int ID = std::stoi(split(sample, '.')[3]);
+            //std::cout << ID << std::endl;
+            //TCut weight1fb = to_TCut("1000.0 * sampleWeight * eventWeight * lep_weight[0] * lep_weight[1] / " + to_TString(nEvents[ID]));
+            TCut weight1fb = to_TCut("1000.0 * " + to_TString(sampleWeight[ID]) + " / " + to_TString(nEvents[ID]));
+            Group newGroup("New Group");
+            newGroup.AddSample(sample);
+            AddGroup(newGroup);
+            Plot* newPlot = AddPlot("mll", to_TCut(to_TString(luminosity/1000.)) * weight1fb * thisRegion);
+            newPlot->SetBins(50, 0, 1000);
+            dataTables yieldsAndErrors = MakePlot(true);
+            auto yield = yieldsAndErrors.first;
+            //std::cout << yield[0][0] << std::endl;
+
+            if (yields.count(ID) == 0)
+                yields[ID] = yield[0][0];
+            else
+                yields[ID] += yield[0][0];
+        }
+
+        for(auto it = processes.begin(); it != processes.end(); ++it) {
+            //cout << it->first << ": ";
+            vector<int> samples = it->second;
+            float yield = 0;
+            for (int i=0; i<samples.size(); i++)
+                yield += yields[samples[i]];
+            //cout << yield << endl;
+            totalYields[it->first] = yield;
+        }
+
+        for(auto it = totalYields.begin(); it != totalYields.end(); ++it) {
+            cout << it->first << ": ";
+            cout << it->second << endl;
+        }
+
+        cout << endl;
+    }
+}
+
+// Percent of ZZ in Sherpa VV for each region
+void VVZZSubtractionPercentage() {
+
+    // Options
+
+    MCPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/v1_02/MCDibosons/";
+    dataPath = "/afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/v1_02/Data/";
+    saveDirectory = "/afs/cern.ch/user/m/mazhang/Plots/VVZZSubtraction/";
+    saveImage = false;
+    blinded = false;
+
+    SetLuminosity(14700);
+
+    DefineSampleGroups();
+    DefineWeightsAndRegions();
+
+    // Create plots
+    
+    cout<<"\\begin{table}[hbt]"<<endl;
+    cout<<"\\centering"<<endl;
+    cout<<"\\begin{tabular}{ l | c | c }"<<endl;
+    cout<<"& {\\sc Sherpa} $ZZ$ [\\%] & {\\sc Powheg} $ZZ$ [\\%] \\\\"<<endl;
+    cout<<"\\hline"<<endl;
+
+    TCut weight = to_TCut(to_TString(luminosity/1000.) + "*weight1fb");
+
+    SherpaVV.SetName("Sherpa VV SF");
+    Group SherpaVVDF = SherpaVV;
+    SherpaVVDF.SetName("Sherpa VV DF");
+
+        //AddGroup(SherpaVV);
+        //SherpaVVDF.SetCustomWeight(weight * DF);
+        //AddGroup(SherpaVVDF);
+        //Plot* newPlot = AddPlot("mll", weight * SF, "Sherpa VV Components");
+        //newPlot->SetBins(15, 0, 200);
+        //MakePlot(false);
+
+        //AddGroup(SherpaVV);
+        //SherpaVVDF.SetCustomWeight(weight * SRZ_DF);
+        //AddGroup(SherpaVVDF);
+        //Plot* newPlot = AddPlot("mll", weight * SRZ, "Sherpa VV Components in SRZ");
+        //newPlot->SetBins(15, 0, 200);
+        //MakePlot(false);
+
+    vector<TCut> regionCut = {SRZ, CRT, VRT, VRS, EdgeSRLow, EdgeSRMed, EdgeSRHigh, EdgeVRLow, EdgeVRMed, EdgeVRHigh};
+    vector<TCut> DFRegionCut = {SRZ_DF, CRT_DF, VRT_DF, VRS_DF, EdgeCRTLow, EdgeCRTMed, EdgeCRTHigh, EdgeVRTLow, EdgeVRTMed, EdgeVRTHigh};
+    vector<TString> regionName = {"SRZ", "CRT", "VRT", "VRS", "EdgeSRLow", "EdgeSRMed", "EdgeSRHigh", "EdgeVRLow", "EdgeVRMed", "EdgeVRHigh"};
+
+    vector<dataTables> defaultYieldsAndErrors = {};
+    for (int cutn=0; cutn<regionCut.size(); cutn++) {
+
+        TCut thisRegion = regionCut[cutn];
+        TCut thisDFRegion = DFRegionCut[cutn];
+        SherpaVVDF.SetCustomWeight(thisDFRegion * weight);
+
+        AddGroup(SherpaVV);
+        AddGroup(SherpaVVDF);
+        AddGroup(PowhegZZ_2l2v);
+        AddGroup(PowhegWW);
+        SetTree("outputTree");
+        Plot* newPlot = AddPlot("mll", weight * thisRegion);
+        newPlot->SetBins(50, 0, 1000);
+        dataTables yieldsAndErrors = MakePlot(false);
+        auto yields = yieldsAndErrors.first;
+        auto errors = yieldsAndErrors.second;
+
+        float SherpaPercentage = (yields[0][0]-yields[1][0])/yields[0][0];
+        float SErrPt1 = sqrt(pow(errors[0][0],2)+pow(errors[1][0],2))/(yields[0][0]-yields[1][0]);
+        float SErrPt2 = errors[0][0]/yields[0][0];
+        float SherpaPercentageError = SherpaPercentage*sqrt(pow(SErrPt1,2)+pow(SErrPt2,2));
+
+        float PowhegPercentage = yields[2][0]/(yields[2][0]+yields[3][0]);
+        float PErrPt1 = errors[2][0]/yields[2][0];
+        float PErrPt2 = sqrt(pow(errors[2][0],2)+pow(errors[3][0],2))/(yields[2][0]+yields[3][0]);
+        float PowhegPercentageError = PowhegPercentage*sqrt(pow(PErrPt1,2)+pow(PErrPt2,2));
+
+        cout<<regionName[cutn]<<" & $"<<SigFig(SherpaPercentage*100,2)<<"\\pm"<<SigFig(SherpaPercentageError*100,2)<<"$ & $"<<SigFig(PowhegPercentage*100,2)<<"\\pm"<<SigFig(PowhegPercentageError*100,2)<<"$ \\\\"<<endl;
+    }
+
+    cout<<"\\end{tabular}"<<endl;
+    cout<<"\\caption{Percentage of $ZZ$ in $VV\\rightarrow \\ell\\ell\\nu\\nu$ for {\\sc Sherpa} and {\\sc Powheg} in various signal regions at $"<<luminosity/1000.<<"~\\mathrm{fb}^{-1}$. CR-FS is not included in this table because it is a DF region. To maintain consistency in the SRZ region, we use a $50\\%$ value in all SRZ $ZZ \\rightarrow \\ell\\ell\\nu\\nu$ estimations. These numbers are obtained using {\\sc Powheg} and {\\sc Sherpa} samples.}"<<endl;
+    cout<<"\\label{table:VVpercentage}"<<endl;
+    cout<<"\\\end{table}"<<endl;
+}
+
+//-----------------------------------------------------------------------------------------------------
+// Calling function
+//-----------------------------------------------------------------------------------------------------
+
+void SimpleNtuplePlotter() {
+    //MCRegionYieldsTable();
+    //SherpaPowhegSystematic();
+    //SherpaPowhegSystematic_DibosonVR();
+    //TreeSystematicsTable();
+    //TrackHistograms();
+    DibosonRegionYields();
+    //DibosonVRPlots();
+    //DibosonSystematics();
+    //SampleYields();
+    //VVZZSubtractionPercentage();
+}

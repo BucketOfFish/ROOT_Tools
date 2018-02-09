@@ -1,0 +1,48 @@
+
+Processing addBranches.cxx...
+
+Opening file           : /afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/v1_02/MCDibosons//361485.root
+Events in ntuple       : 0
+Total generated events : 204065
+
+Opening file           : /afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/v1_02/MCDibosons//361486.root
+Events in ntuple       : 342
+Total generated events : 256110
+sampleWeight           : 6.24739
+eventWeight            : 1
+weight1fb              : 0.0228833
+
+Opening file           : /afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/v1_02/MCDibosons//361487.root
+Events in ntuple       : 68
+Total generated events : 45626.3
+sampleWeight           : 0.731076
+eventWeight            : -1
+weight1fb              : -0.0155034
+
+Opening file           : /afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/v1_02/MCDibosons//361488.root
+Events in ntuple       : 834
+Total generated events : 137153
+sampleWeight           : 0.556597
+eventWeight            : 1
+weight1fb              : 0.00392988
+
+Opening file           : /afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/v1_02/MCDibosons//361489.root
+Events in ntuple       : 284
+Total generated events : 52090
+sampleWeight           : 0.0750899
+eventWeight            : -1
+weight1fb              : -0.00136686
+
+Opening file           : /afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/v1_02/MCDibosons//361490.root
+Events in ntuple       : 190
+Total generated events : 39918.4
+sampleWeight           : 0.00565246
+eventWeight            : 1
+weight1fb              : 0.000139282
+
+Opening file           : /afs/cern.ch/user/m/mazhang/eos/atlas/user/m/mazhang/Data/Ntuples/v1_02/MCDibosons//361491.root
+Events in ntuple       : 91
+Total generated events : 25147.4
+sampleWeight           : 0.0012948
+eventWeight            : 1
+weight1fb              : 4.99864e-05

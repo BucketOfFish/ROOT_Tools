@@ -1,0 +1,233 @@
+// #include </afs/cern.ch/user/m/mazhang/Projects/Tools/Libraries/Definitions.h>
+// Initialize with DefineSampleGroups() and DefineWeightsAndRegions() before using, or call InitDefinitions() from Functions.h!
+ 
+#include "Classes.h"
+
+#ifndef DEFINITIONS_H
+#define DEFINITIONS_H
+ 
+// Wishlist
+// Make it so we don't use global variables
+// Change the fact that you need to call DefineSampleGroups() and DefineRegions()
+// GetTree() seems to be fucked up
+ 
+// Sample Groups
+ 
+Group Zee ("Zee");
+Group Zmm ("Zmm");
+Group Ztt ("Ztt");
+Group Zee_noDY ("Zee");
+Group Zmm_noDY ("Zmm");
+Group Ztt_noDY ("Ztt");
+Group Zee2 ("Zee Sherpa 2.2");
+Group Zmm2 ("Zmm Sherpa 2.2");
+Group Ztt2 ("Ztt Sherpa 2.2");
+Group ttbar ("ttbar");
+Group rareTop ("Rare Top");
+Group SherpaVV ("Sherpa VV - llvv");
+Group SherpaWZ ("Sherpa WZ - lllv");
+Group SherpaZZ ("Sherpa ZZ - llll");
+Group PowhegWZ ("Powheg WZ - lllv");
+Group PowhegZZ_4l ("Powheg ZZ - llll");
+Group PowhegZZ_2l2v ("Powheg ZZ - llvv");
+Group PowhegWW ("Powheg WW - llvv");
+ 
+Group data ("Data");
+Group blindedData ("Blinded Data");
+ 
+void DefineSampleGroups() {
+ 
+    for (int i=361372; i<=361443; i++) {
+        if (i<=361395) {
+            Zee.AddSample(i);
+            Zee_noDY.AddSample(i);
+        }
+        else if (i<=361419) {
+            Zmm.AddSample(i);
+            Zmm_noDY.AddSample(i);
+        }
+        else {
+            Ztt.AddSample(i);
+            Ztt_noDY.AddSample(i);
+        }
+    }
+
+    for (int i=361468; i<=361491; i++) { //DY
+        if (i<=361475)
+            Zee.AddSample(i);
+        else if (i<=361483)
+            Zmm.AddSample(i);
+        //Checkpoint - because 361484.root is not working right now
+        else if (i>=361485)
+            Ztt.AddSample(i);
+    }
+ 
+    ////Sherpa 2.2 - ain't right, look at spreadsheet
+    //for (int i=363102; i<=363122; i++) {
+            //Ztt2.AddSample(i);
+    //}
+    //Ztt2.AddSample(363361);
+    //Ztt2.AddSample(363362);
+    //Ztt2.AddSample(363363);
+        //if (i<=363387) {
+            //Zmm2.AddSample(i);
+		//}
+        //else if (i<=363411) {
+            //Zee2.AddSample(i);
+		//}
+        //else {
+            //Ztt2.AddSample(i);
+		//}
+    //}
+
+    //for (int i=361468; i<=361491; i++) { //DY
+        //if (i<=361475)
+            //Zee2.AddSample(i);
+        //else if (i<=361483)
+            //Zmm2.AddSample(i);
+        //else if (i>=361486)
+            //Ztt2.AddSample(i);
+    //}
+
+    ttbar.AddSample(410000);
+    vector<int> tW = {410015, 410016, 410064, 410065};
+    for (int i:tW) {
+        ttbar.AddSample(i);
+    }
+ 
+    vector<int> tZ = {410050};
+    for (int i:tZ) {
+        rareTop.AddSample(i);
+    }
+    vector<int> ttW = {410066, 410067, 410068};
+    for (int i:ttW) {
+        rareTop.AddSample(i);
+    }
+    vector<int> ttZ = {410111, 410112, 410113, 410114, 410115, 410116};
+    for (int i:ttZ) {
+        rareTop.AddSample(i);
+    }
+    rareTop.AddSample("410081"); //tt+WW
+ 
+    SherpaVV.AddSample("361068");  //llvv
+    SherpaVV.AddSample("361077");  //llvv (gg)
+ 
+    for (int i=361064; i<=361067; i++) {
+        SherpaWZ.AddSample(i);
+    }
+ 
+    SherpaZZ.AddSample("361063");  //llll
+    SherpaZZ.AddSample("361073");  //llll (gg)
+ 
+    PowhegWZ.AddSample("361601");
+    PowhegZZ_4l.AddSample("361603");
+    PowhegZZ_2l2v.AddSample("361604");
+    PowhegWW.AddSample("361600");
+ 
+    data.AddSample("data", dataPath);
+    data.isData = true;
+    blindedData.AddSample("data_blinded", dataPath);
+    blindedData.isData = true;
+}
+ 
+// Weights and selections
+ 
+TCut SRZ, CRT, CRFS, VRFS, VRT, VRS, CRZ, VRZ;
+TCut SRZ_DF, CRT_DF, VRT_DF, VRS_DF;
+TCut SRZ_noSF, CRT_noSF, VRT_noSF, VRS_noSF;
+TCut EdgeSRLow, EdgeSRMed, EdgeSRHigh, EdgeVRLow, EdgeVRMed, EdgeVRHigh, EdgeCRTLow, EdgeCRTMed, EdgeCRTHigh, EdgeVRTLow, EdgeVRTMed, EdgeVRTHigh;
+TCut VR3L, VR3LDF;
+TCut MCWeight;
+TCut trigger, mllMin45, mllMin40, mllMin12, lepReq5025, lepReq2525, jetReq, SF, DF, OSSF, OS, OffZWindow, ZWindow, dPhiJetMET;
+TCut HTincl600, goodMuons;
+ 
+void DefineWeightsAndRegions() {
+ 
+    // Using potentially nonexistant value (such as mu_isBad[1]) causes problems - try to debug
+    trigger = "((channel==1 && eetrig && eetrig_match) || (channel==0 && mmtrig && mmtrig_match) || (channel>=2 && emtrig && emtrig_match))";
+    //goodMuons = "goodMuons";
+    goodMuons = "1";
+    mllMin45 = "mll>45";
+    mllMin40 = "mll>40";
+    mllMin12 = "mll>12";
+    lepReq5025 = "(lep_n>=2 && lep_pT[0]>50 && lep_pT[1]>25)";
+    lepReq2525 = "(lep_n>=2 && lep_pT[0]>25 && lep_pT[1]>25)";
+    jetReq = "(jet_n>=2 && jet_pT[0]>30 && jet_pT[1]>30)";
+    OSSF = "(lep_pdgId[0] == -lep_pdgId[1])";
+    OS = "(lep_pdgId[0]*lep_pdgId[1] < 0)";
+	SF = "(channel==0 || channel==1)";
+    DF = "(channel==2 || channel==3)";
+    ZWindow = "(mll>81 && mll<101)";
+    OffZWindow = "(mll<81 || mll>101)";
+    dPhiJetMET = "(DPhi_METJetLeading>0.4 && DPhi_METJetSecond>0.4)";
+    HTincl600 = "(HTincl>600)";
+ 
+    VRS_noSF = trigger + goodMuons + mllMin40 + lepReq5025 + jetReq + OS + ZWindow + "MET>100 && MET<200" + HTincl600 + dPhiJetMET;
+    SRZ_noSF = trigger + goodMuons + mllMin40 + lepReq5025 + jetReq + OS + ZWindow + "MET>225" + HTincl600 + dPhiJetMET;
+    VRT_noSF = trigger + goodMuons + mllMin40 + lepReq5025 + jetReq + OS + OffZWindow + "MET>100 && MET<200" + HTincl600 + dPhiJetMET;
+    CRT_noSF = trigger + goodMuons + mllMin40 + lepReq5025 + jetReq + OS + OffZWindow + "MET>225" + HTincl600 + dPhiJetMET;
+
+	VRS = VRS_noSF + SF;
+	SRZ = SRZ_noSF + SF;
+	CRT = CRT_noSF + SF;
+	VRT = VRT_noSF + SF;
+
+	VRS_DF = VRS_noSF + DF;
+	SRZ_DF = SRZ_noSF + DF;
+	CRT_DF = CRT_noSF + DF;
+	VRT_DF = VRT_noSF + DF;
+
+    CRZ = trigger + goodMuons + mllMin40 + lepReq5025 + jetReq + OS + SF + ZWindow + "MET<60" + HTincl600 + dPhiJetMET;
+    VRZ = trigger + goodMuons + mllMin40 + lepReq5025 + jetReq + OS + SF + ZWindow + "MET<225" + HTincl600 + dPhiJetMET;
+
+    CRFS = trigger + goodMuons + mllMin40 + lepReq5025 + jetReq + OS + DF + "mll>61 && mll<121 && MET>225" + HTincl600 + dPhiJetMET;
+    VRFS = trigger + goodMuons + mllMin40 + lepReq5025 + jetReq + OS + DF + "mll>61 && mll<121 && MET>100 && MET<200" + HTincl600 + dPhiJetMET;
+ 
+    EdgeSRLow = trigger + goodMuons + mllMin12 + OSSF + lepReq2525 + jetReq + dPhiJetMET + "MET>200";
+    EdgeSRMed = trigger + goodMuons + mllMin12 + OSSF + lepReq2525 + jetReq + dPhiJetMET + "MET>200" + "HT>400";
+    EdgeSRHigh = trigger + goodMuons + mllMin12 + OSSF + lepReq2525 + jetReq + dPhiJetMET + "MET>200" + "HT>700";
+
+    //flavor-symmetric control regions
+    EdgeCRTLow = trigger + goodMuons + mllMin12 + OS + DF + lepReq2525 + jetReq + dPhiJetMET + "MET>200";
+    EdgeCRTMed = trigger + goodMuons + mllMin12 + OS + DF + lepReq2525 + jetReq + dPhiJetMET + "MET>200" + "HT>400";
+    EdgeCRTHigh = trigger + goodMuons + mllMin12 + OS + DF + lepReq2525 + jetReq + dPhiJetMET + "MET>200" + "HT>700";
+ 
+    EdgeVRLow = trigger + goodMuons + mllMin12 + OSSF + lepReq2525 + jetReq + dPhiJetMET + "MET>100 && MET<200";
+    EdgeVRMed = trigger + goodMuons + mllMin12 + OSSF + lepReq2525 + jetReq + dPhiJetMET + "MET>100 && MET<200" + "HT>400";
+    EdgeVRHigh = trigger + goodMuons + mllMin12 + OSSF + lepReq2525 + jetReq + dPhiJetMET + "MET>100 && MET<200" + "HT>700";
+ 
+    //flavor-symmetric regions for VR (I don't think we call them VRT but whatever)
+    EdgeVRTLow = trigger + goodMuons + mllMin12 + OS + DF + lepReq2525 + jetReq + dPhiJetMET + "MET>100 && MET<200";
+    EdgeVRTMed = trigger + goodMuons + mllMin12 + OS + DF + lepReq2525 + jetReq + dPhiJetMET + "MET>100 && MET<200" + "HT>400";
+    EdgeVRTHigh = trigger + goodMuons + mllMin12 + OS + DF + lepReq2525 + jetReq + dPhiJetMET + "MET>100 && MET<200" + "HT>700";
+
+	VR3L = trigger + goodMuons + "lep_n>=3 && lep_pT[0]>50 && lep_pT[1]>25 && lep_pT[2]>25 && MET>60 && MET<100 && HTincl>200 && jet_n>=2" + ZWindow + OS + dPhiJetMET;
+	VR3LDF = VR3L + DF;
+	VR3L = VR3L + SF;
+
+    //EdgeSRLow = "(eetrig || mmtrig || emtrig) && mll>12 && lep_n>=2 && lep_pT[0]>25 && lep_pT[1]>25 && jet_n>=2 && jet_pT[0]>30 && jet_pT[1]>30 && lep_pdgId[0]*lep_pdgId[1] < 0 && DPhi_METJetLeading>0.4 && DPhi_METJetSecond>0.4 && MET>200";
+
+    MCWeight = "weight1fb/1000*"+TString(to_string(luminosity));
+}
+ 
+// Add groups
+
+void AddSMGroups() {
+    AddGroup(Zee);
+    AddGroup(Zmm);
+    AddGroup(Ztt);
+    AddGroup(ttbar);
+    AddGroup(rareTop);
+    AddGroup(SherpaVV);
+    AddGroup(SherpaWZ);
+    AddGroup(SherpaZZ);
+}
+ 
+void AddData() {
+    if(blinded)
+        AddGroup(blindedData);
+    else
+        AddGroup(data);
+}
+
+#endif //DEFINITIONS_H

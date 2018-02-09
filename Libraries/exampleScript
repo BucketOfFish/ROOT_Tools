@@ -1,0 +1,13 @@
+#include </afs/cern.ch/user/m/mazhang/Projects/Tools/Libraries/Functions.h>
+
+InitDefinitions();
+vector<int> lep_n = {};
+TTree* WZTree = SherpaWZ.GetTree();
+FillFromBranch (WZTree, lep_n, "lep_n");
+vector<int> threelep = {};
+for (int i=0; i<lep_n.size(); i++) {
+    if(lep_n[i]>=3) threelep.push_back(1);
+    else threelep.push_back(0);
+}
+AddBranch(WZTree, threelep, "3_leps");
+WZTree->Scan("lep_n:3_leps");

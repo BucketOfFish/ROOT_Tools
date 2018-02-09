@@ -1,0 +1,14 @@
+#############################
+# README for ntuple scripts #
+#############################
+
+### Merging Ntuples
+
+use makeFileHaddTemplate.C to create a template ntuple (full tree with 0 entries) that goes in front of the hadd command.  The 'sourceFile' in this script should point to an ntuple that contains the full set of branches, e.g. ttbar.
+
+Then use mergeFiles.py in a folder where you've downloaded all of the grid jobs.  'haddTemplate' in this script should point to the output of makeFileHaddTemplate.C
+
+*Note* the template functionality has only been tested locally, not on everything
+
+
+### Making Fakes Ntuples

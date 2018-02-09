@@ -1,0 +1,867 @@
+\section{Datasets}
+\label{sec:datasamples}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Data samples}
+\label{sec:data}
+
+This note analyzes the complete dataset collected with the ATLAS detector 
+at $\sqrt{s}=8\TeV$.
+%, corresponding to a total integrated luminosity of
+% $\int\!{\cal L}\,{\rm d}t\simeq 20.3~\ifb$. 
+%Further details on requirements on data quality and GRL can be found 
+%in~\cite{COMB_INT}.
+To assure good data quality, a good run list (GRL) selection is applied.
+This GRL is taken from the official Data Preparation Group 
+webpage~\cite{grl}, using version \texttt{v61\_pro14-02\_DQDefects-00-01-00\_PHYS \_StandardGRL\_All\_Good}. 
+Since in the analysis electrons, muons, jets as well as \met\ are 
+required, it is mandatory that basically all sub--systems of the 
+ATLAS detector are in good condition. This is reflected in the specific
+GRL, which assures good data quality for all relevant sub--systems. 
+Applying this good run list results in a loss of approx. 6\% of data, leaving an integrated luminosity of $\int \mathscr{L}\mathrm{dt} = 20.3\,\ifb$ for analysis.
+For the 2012 dataset the preliminary luminosity uncertainty is $\pm$ 2.8 \% based on the calibration procedure described in~\cite{lumi}.
+%Data streams and trigger used for each analysis are briefly summarized in Table~\ref{tab:TrigStream}. 
+The details of the trigger strategy are described in Section~\ref{sec:trigger}.
+
+
+ 
+%The requirement that all sub-systems of the ATLAS experiment are working 
+%acceptably reduces the total integrated luminosity to
+% $\int_\text{GRL}\!{\cal L}\,{\rm d}t=(20.3\pm0.6)~\ifb$ with a 
+% luminosity measurement uncertainty equal to 
+% $2.8\%$~\cite{Aad:2011dr} {\bf TO BE CHECKED}. 
+% The subdetector and data quality criteria are imposed using a 
+% good-run list (GRL) taken from the official Data Preparation Group
+%  webpage, version 
+%  \\ {\tt \footnotesize data12\_8TeV.periodAllYear\_DetStatus-v58-pro14-01\_DQDefects-00-00-33\_PHYS\_StandardGRL\_All\_Good.xml}, \\ 
+%  covering the entire 2012 proton-proton run period. 
+%Data collected by both the {\tt egamma} and {\tt muon} streams are used.
+
+%Events are selected using dilepton triggers for which the offline transverse
+% momentum (\pT) threshold is the plateau of the turn-on curve. 
+% For the dielectron selection, each event must fire either the 
+% {\tt EF\_e24vh\_medium1\_e7\_medium1} or the {\tt EF\_2e12Tvh\_loose1} trigger.
+%  Dimuon events are selected if they fire the {\tt EF\_mu18\_tight\_mu8\_EFFS} or
+%   the {\tt EF\_2mu13} trigger. In addition, $e\mu$ events, used in the estimation
+%    of some SM backgrounds, are selected if they pass the 
+%    {\tt EF\_e12Tvh\_medium1\_mu8} or the {\tt EF\_mu18\_tight\_e7\_medium1} trigger. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Background Monte Carlo}
+\label{sec:BackgroundMC}
+
+The main SM backgrounds considered in this analysis are the \dyjets, $\ttbar$, single-top, 
+and diboson processes. The evaluation of the instrumental \dyjets~background, 
+which has \met~that is mostly due to hadronic mismeasurement, is made using 
+a data-driven method. The $WW$, $\ttbar$, $Wt$, $\tau\tau$ backgrounds are 
+estimated using $e\mu$ events. Minor backgrounds, such as dibosons, are estimated 
+using Monte Carlo (MC) simulation, see section~\ref{sec:background}. 
+%The QCD and inclusive \wjets~backgrounds are negligible. (CHECK)
+%An overview of the main background samples is also given 
+%in~\cite{COMB_INT}.
+
+All Monte Carlo samples used in the analysis are from the official MC12a Monte Carlo production. 
+These samples use the production tag \texttt{p1328}. 
+Tables~\ref{tab:mcsample_ttbar} - \ref{tab:mcsample_dy}
+%tab:mcsample_wjet, tab:mcsample_zjet, tab:mcsample_dy, tab:mcsamle_singletop, tab:mcsample_ttbarV, tab:mcsample_diboson, 
+document all the simulated samples used in this note with their respective
+cross-sections.
+Minimum bias events generated with Pythia8 are overlaid in the digitization phase,
+where average number of interactions per event $\langle \mu \rangle$ ranges between 0 to 40.
+In order to reproduce the pile-up conditions of the data, the $\langle \mu \rangle$ distribution is 
+reweighted according to the one in data using {\tt PileupReweighting} package.
+Due to the fact that the total inelastic cross-section is not known completely, the number of vertices $N_{vtx}$ distribution 
+is not reproduced even after the $\langle \mu \rangle$ reweighting.
+Since what has much effect on the analysis is $N_{vtx}$, we rescale the $\langle \mu \rangle$ by $1/1.11$ before calculating 
+the reweighting factor, which results in a better agreement of $N_{vtx}$ between data and Monte Carlo.
+%To address the impact of those uncertainties for this analysis, 
+%the $\langle \mu \rangle$ distribution is scaled by the factors 0.9 and 1.1 around the nominal value, 
+%the resulting changes in MC event counts are then included in the final results. 
+
+The \dyjets\ background is notoriously difficult to estimate in high \met\ and \HT\ regions. 
+In order to check event level distributions in the signal region extra $Z+\text{jets}$ MC was requested in June 2014. 
+To increase the signal region statistics an increase in the statistics of Dataset Numbers 167821-167826 and 167833-167838 was requested. 
+These samples are indicated in Table~\ref{tab:mcsample_zjet}. 
+For the lower \pt\ $Z$ samples very few events survive the harsh \met\ and \HT\ cuts of the SR. 
+To ensure reasonable statistics from these samples in this region an \HT-filter was applied to the samples. 
+These samples are summarised in Table~\ref{tab:mcsample_HTFilter}. 
+More details on the studies relating to these extra samples can be found in Appendix~\ref{HTfilter}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  ttbar
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table}[htb]
+\begin{center}
+%\resizebox{\textwidth}{!}{
+\begin{tabular}{|p{1.7cm}|p{5cm}|p{4.5cm}|p{3cm}|}
+\hline
+Sample ID 	& Name 					& Generator 		& $\sigma$ [pb]\\
+\hline\hline
+117050	& ttbar &{\sc Powheg+Pythia}	&	253 $\times$ 0.543 \\
+\hline
+\end{tabular}
+%}
+\caption{Summary table of the \ttbar\ Monte Carlo samples used in the analysis. $\sigma$ is a NLO+NLL
+cross-section times the fraction of none hadronic top decay.}
+\label{tab:mcsample_ttbar}
+\end{center}
+\end{table}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% single-top
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table}[htb]
+\begin{center}
+%\resizebox{\textwidth}{!}{
+%\begin{tabular}{|c|c|c|c|}
+\begin{tabular}{|p{1.7cm}|p{5cm}|p{4.5cm}|p{3cm}|}
+\hline
+Sample ID 	& Name 					& Generator 		& $\sigma$ [pb]\\
+\hline\hline
+%110101 & singletop\_tchan\_l	& {\sc AcerMC} & 25.8 $\times$ 1.10 \\ 
+%110119 & st\_schan\_lep              	& {\sc Powheg} & 1.64 $\times$ 1.11 \\
+%110140 & st\_Wtchan\_incl\_DR		& {\sc Powheg} & 20.5 $\times$ 1.09 \\
+110141 & st\_Wtchan\_dilepton\_DR	& {\sc Powheg+Pythia} & 2.15 $\times$ 1.09 \\ 
+179991 & tZ\_Wtchan\_Zll                        & {\sc MadGraph+Pythia} & 0.0041 \\
+179992 & tZ\_stchan\_Zll                        & {\sc MadGraph+Pythia} & 0.0312 \\
+\hline
+\end{tabular}
+%}
+\caption{Summary table of the single top Monte Carlo samples used in the analysis. $\sigma$ is a LO cross-section times $k$-factor where applicable.}
+\label{tab:mcsample_singletop}
+\end{center}
+\end{table}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ttbar+V
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table}[htb]
+\begin{center}
+%\resizebox{\textwidth}{!}{
+%\begin{tabular}{|c|c|c|c|}
+\begin{tabular}{|p{1.7cm}|p{5cm}|p{4.5cm}|p{3cm}|}
+\hline
+Sample ID 	& Name 					& Generator 		& $\sigma$ [pb]\\
+\hline\hline
+119353 & ttbarW		& {\sc MadGraph+Pythia} & 0.104   $\times$ 1.17 \\
+174830 & ttbarWjExcl	& {\sc MadGraph+Pythia} & 0.0534  $\times$ 1.17 \\
+174831 & ttbarWjjIncl	& {\sc MadGraph+Pythia} & 0.0415  $\times$ 1.17 \\
+119355 & ttbarZ		& {\sc MadGraph+Pythia} & 0.0677  $\times$ 1.35 \\
+174832 & ttbarZjExcl	& {\sc MadGraph+Pythia} & 0.0454  $\times$ 1.35 \\
+174833 & ttbarZjjIncl	& {\sc MadGraph+Pythia} & 0.0398  $\times$ 1.35 \\
+119583 & ttbarWW	& {\sc MadGraph+Pythia} & 0.00092 \\
+\hline
+\end{tabular}
+%}
+\caption{Summary table of the \ttbar\ plus W/Z Monte Carlo samples used in the analysis. $\sigma$ is a LO cross-section times $k$-factor where applicable.}
+\label{tab:mcsample_ttbarV}
+\end{center}
+\end{table}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Dibosons (Powheg)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table}[htb]
+\begin{center}
+%\resizebox{\textwidth}{!}{
+%\begin{tabular}{|c|c|c|c|}
+\begin{tabular}{|l|l|l|l|}
+\hline
+Sample ID 	& Name 					& Generator 		& $\sigma$ [pb]\\
+\hline\hline
+126928	& WpWm\_ee					& {\sc Powheg+Pythia8} & 0.598 $\times$ 1.08 $\times$ 1 \\
+126929	& WpWm\_me					& {\sc Powheg+Pythia8} & 0.597 $\times$ 1.08 $\times$ 1 \\
+126930	& WpWm\_te					& {\sc Powheg+Pythia8} & 0.598 $\times$ 1.08 $\times$ 1 \\
+126931	& WpWm\_em					& {\sc Powheg+Pythia8} & 0.598 $\times$ 1.08 $\times$ 1 \\
+126932	& WpWm\_mm					& {\sc Powheg+Pythia8} & 0.597 $\times$ 1.08 $\times$ 1 \\
+126933	& WpWm\_tm					& {\sc Powheg+Pythia8} & 0.597 $\times$ 1.08 $\times$ 1 \\
+126934	& WpWm\_et					& {\sc Powheg+Pythia8} & 0.597 $\times$ 1.08 $\times$ 1 \\
+126935	& WpWm\_mt					& {\sc Powheg+Pythia8} & 0.598 $\times$ 1.08 $\times$ 1 \\
+126936	& WpWm\_tt					& {\sc Powheg+Pythia8} & 0.598 $\times$ 1.08 $\times$ 1 \\
+126937	& ZZ\_4e\_mll4\_2pt5				& {\sc Powheg+Pythia8} & 0.0769 $\times$ 1 $\times$ 0.908 \\
+126938	& ZZ\_2e2mu\_mll4\_2pt5			        & {\sc Powheg+Pythia8} & 0.176  $\times$ 1 $\times$ 0.827 \\
+126939	& ZZ\_2e2tau\_mll4\_2pt5			& {\sc Powheg+Pythia8} & 0.175  $\times$ 1 $\times$ 0.583 \\
+126940	& ZZ\_4mu\_mll4\_2pt5				& {\sc Powheg+Pythia8} & 0.0769 $\times$ 1 $\times$ 0.912 \\
+126941	& ZZ\_2mu2tau\_mll4\_2pt5			& {\sc Powheg+Pythia8} & 0.175  $\times$ 1 $\times$ 0.587 \\
+126942	& ZZ\_4tau\_mll4\_2pt5				& {\sc Powheg+Pythia8} & 0.0769 $\times$ 1 $\times$ 0.106 \\
+126949	& ZZllnunu\_ee\_mll4				& {\sc Powheg+Pythia8} & 0.0543 $\times$ 3 $\times$ 1 \\
+126950	& ZZllnunu\_mm\_mll4				& {\sc Powheg+Pythia8} & 0.0543 $\times$ 3 $\times$ 1 \\
+126951	& ZZllnunu\_tt\_mll4				& {\sc Powheg+Pythia8} & 0.0543 $\times$ 3 $\times$ 1 \\
+129477	& WZ\_Wm11Z11\_mll0p250d0\_2LeptonFilter5	& {\sc Powheg+Pythia8} & 1.41  $\times$ 1.12 $\times$ 0.295 \\
+129478	& WZ\_Wm11Z13\_mll0p4614d0\_2LeptonFilter5	& {\sc Powheg+Pythia8} & 0.938 $\times$ 1.12 $\times$ 0.352 \\
+129479	& WZ\_Wm11Z15\_mll3p804d0\_2LeptonFilter5	& {\sc Powheg+Pythia8} & 0.175 $\times$ 1.12 $\times$ 0.167 \\
+129480	& WZ\_Wm13Z11\_mll0p250d0\_2LeptonFilter5	& {\sc Powheg+Pythia8} & 1.40  $\times$ 1.12 $\times$ 0.294 \\
+129481	& WZ\_Wm13Z13\_mll0p4614d0\_2LeptonFilter5	& {\sc Powheg+Pythia8} & 0.954 $\times$ 1.12 $\times$ 0.351 \\
+129482	& WZ\_Wm13Z15\_mll3p804d0\_2LeptonFilter5	& {\sc Powheg+Pythia8} & 0.175 $\times$ 1.12 $\times$ 0.169 \\
+129483	& WZ\_Wm15Z11\_mll0p250d0\_2LeptonFilter5	& {\sc Powheg+Pythia8} & 1.40  $\times$ 1.12 $\times$ 0.143 \\
+129484	& WZ\_Wm15Z13\_mll0p4614d0\_2LeptonFilter5	& {\sc Powheg+Pythia8} & 0.938 $\times$ 1.12 $\times$ 0.183 \\
+129485	& WZ\_Wm15Z15\_mll3p804d0\_2LeptonFilter5	& {\sc Powheg+Pythia8} & 0.172 $\times$ 1.12 $\times$ 0.0585 \\
+129486	& WZ\_W11Z11\_mll0p250d0\_2LeptonFilter5	& {\sc Powheg+Pythia8} & 0.980 $\times$ 1.14 $\times$ 0.297 \\
+129487	& WZ\_W11Z13\_mll0p4614d0\_2LeptonFilter5	& {\sc Powheg+Pythia8} & 0.639 $\times$ 1.14 $\times$ 0.353 \\
+129488	& WZ\_W11Z15\_mll3p804d0\_2LeptonFilter5	& {\sc Powheg+Pythia8} & 0.113 $\times$ 1.14 $\times$ 0.160 \\
+129489	& WZ\_W13Z11\_mll0p250d0\_2LeptonFilter5	& {\sc Powheg+Pythia8} & 0.936 $\times$ 1.14 $\times$ 0.298 \\
+129490	& WZ\_W13Z13\_mll0p4614d0\_2LeptonFilter5	& {\sc Powheg+Pythia8} & 0.649 $\times$ 1.14 $\times$ 0.354 \\
+129491	& WZ\_W13Z15\_mll3p804d0\_2LeptonFilter5	& {\sc Powheg+Pythia8} & 0.113 $\times$ 1.14 $\times$ 0.160 \\
+129492	& WZ\_W15Z11\_mll0p250d0\_2LeptonFilter5	& {\sc Powheg+Pythia8} & 0.936 $\times$ 1.14 $\times$ 0.148 \\
+129493	& WZ\_W15Z13\_mll0p4614d0\_2LeptonFilter5	& {\sc Powheg+Pythia8} & 0.639 $\times$ 1.14 $\times$ 0.187 \\
+129494	& WZ\_W15Z15\_mll3p804d0\_2LeptonFilter5	& {\sc Powheg+Pythia8} & 0.111 $\times$ 1.14 $\times$ 0.0567 \\
+\hline
+\end{tabular}
+%}
+\caption{Summary table of the Monte Carlo samples used in the analysis. $\sigma$ is a LO cross-section times $k$-factor times event filter efficiency of $W/Z$ decay.}
+\label{tab:mcsample_diboson2}
+\end{center}
+\end{table}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Z+JET (no filter)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table}[htb]
+\begin{center}
+%\resizebox{\textwidth}{!}{
+%\begin{tabular}{|c|c|c|c|}
+\begin{tabular}{|p{1.7cm}|p{7.cm}|p{1.7cm}|p{3.8cm}|}
+\hline
+Sample ID 	& Name 					& Generator 		& $\sigma \times 10^3$[pb]\\
+\hline\hline
+167749 & ZeeMassiveCBPt0\_BFilter		& {\sc Sherpa} & 1.11 $\times$ 1.12 $\times$ 0.0280 \\
+167750 & ZeeMassiveCBPt0\_CFilterBVeto		& {\sc Sherpa} & 1.11 $\times$ 1.12 $\times$ 0.283 \\
+167751 & ZeeMassiveCBPt0\_CVetoBVeto		& {\sc Sherpa} & 1.11 $\times$ 1.12 $\times$ 0.686 \\
+167752 & ZmumuMassiveCBPt0\_BFilter		& {\sc Sherpa} & 1.11 $\times$ 1.12 $\times$ 0.0280 \\
+167753 & ZmumuMassiveCBPt0\_CFilterBVeto	& {\sc Sherpa} & 1.11 $\times$ 1.12 $\times$ 0.283 \\
+167754 & ZmumuMassiveCBPt0\_CVetoBVeto		& {\sc Sherpa} & 1.11 $\times$ 1.12 $\times$ 0.690 \\
+167755 & ZtautauMassiveCBPt0\_BFilter		& {\sc Sherpa} & 1.11 $\times$ 1.12 $\times$ 0.0278 \\
+167756 & ZtautauMassiveCBPt0\_CFilterBVeto	& {\sc Sherpa} & 1.11 $\times$ 1.12 $\times$ 0.284 \\
+167757 & ZtautauMassiveCBPt0\_CVetoBVeto	& {\sc Sherpa} & 1.11 $\times$ 1.12 $\times$ 0.689 \\
+\hline
+\end{tabular}
+%}
+\caption{Summary table of the Monte Carlo samples used in the analysis. $\sigma$ is a cross-section times
+$k$-factor times event filter efficiency, which
+is defined by the event fraction containing heavy-flavor ($b,c$) quarks and hadrons. 
+These samples are used by combining with \pt\ sliced samples defined in Table\,\ref{tab:mcsample_zjet}, where events with $\pt(Z) > 40 \GeV$ are omitted
+to avoid duplication.}
+%%The definition can be found in {\tt Generators/GeneratorFilters/trunk/src/HeavyFlavorHadronFilter.cxx}.}
+\label{tab:mcsample_zjet0}
+\end{center}
+\end{table}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Z+JET (pt slice)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table}[htb]
+\begin{center}
+%\resizebox{\textwidth}{!}{
+%\begin{tabular}{|c|c|c|c|}
+\begin{tabular}{|p{1.7cm}|p{7.3cm}|p{1.7cm}|p{3.5cm}|}
+\hline
+Sample ID 	& Name 					& Generator 		& $\sigma$[pb]\\
+\hline\hline
+180543 & ZeeMassiveCBPt40\_70\_BFilter		& {\sc Sherpa} & 70.5 $\times$ 1.12 $\times$ 0.0706 \\
+180544 & ZeeMassiveCBPt40\_70\_CFilterBVeto 	& {\sc Sherpa} & 70.5 $\times$ 1.12 $\times$ 0.342	 \\ 
+180545 & ZeeMassiveCBPt40\_70\_CVetoBVeto 	& {\sc Sherpa} & 70.4 $\times$ 1.12 $\times$ 0.588	 \\ 
+180546 & ZmumuMassiveCBPt40\_70\_BFilter 	& {\sc Sherpa} & 70.5 $\times$ 1.12 $\times$ 0.0707 \\ 
+180547 & ZmumuMassiveCBPt40\_70\_CFilterBVeto 	& {\sc Sherpa} & 70.5 $\times$ 1.12 $\times$ 0.341	 \\ 
+180548 & ZmumuMassiveCBPt40\_70\_CVetoBVeto 	& {\sc Sherpa} & 70.5 $\times$ 1.12 $\times$ 0.588	 \\ 
+180549 & ZtautauMassiveCBPt40\_70\_BFilter 	& {\sc Sherpa} & 70.4 $\times$ 1.12 $\times$ 0.0709 \\ 
+180550 & ZtautauMassiveCBPt40\_70\_CFilterBVeto & {\sc Sherpa} & 70.5 $\times$ 1.12 $\times$ 0.342	 \\ 
+180551 & ZtautauMassiveCBPt40\_70\_CVetoBVeto 	& {\sc Sherpa} & 70.5 $\times$ 1.12 $\times$ 0.588	 \\ 
+167797 & ZeeMassiveCBPt70\_140\_BFilter		& {\sc Sherpa} & 29.5 $\times$ 1.12 $\times$ 0.0825 \\
+167798 & ZeeMassiveCBPt70\_140\_CFilterBVeto	& {\sc Sherpa} & 29.5 $\times$ 1.12 $\times$ 0.355 \\
+167799 & ZeeMassiveCBPt70\_140\_CVetoBVeto	& {\sc Sherpa} & 29.5 $\times$ 1.12 $\times$ 0.563 \\
+167800 & ZmumuMassiveCBPt70\_140\_BFilter	& {\sc Sherpa} & 29.5 $\times$ 1.12 $\times$ 0.0826 \\
+167801 & ZmumuMassiveCBPt70\_140\_CFilterBVeto	& {\sc Sherpa} & 29.4 $\times$ 1.12 $\times$ 0.355 \\
+167802 & ZmumuMassiveCBPt70\_140\_CVetoBVeto	& {\sc Sherpa} & 29.5 $\times$ 1.12 $\times$ 0.562 \\
+167803 & ZtautauMassiveCBPt70\_140\_BFilter	& {\sc Sherpa} & 29.5 $\times$ 1.12 $\times$ 0.0826 \\
+167804 & ZtautauMassiveCBPt70\_140\_CFilterBVeto& {\sc Sherpa} & 29.5 $\times$ 1.12 $\times$ 0.355 \\
+167805 & ZtautauMassiveCBPt70\_140\_CVetoBVeto	& {\sc Sherpa} & 29.5 $\times$ 1.12 $\times$ 0.562 \\
+167809 & ZeeMassiveCBPt140\_280\_BFilter	& {\sc Sherpa} & 3.99 $\times$ 1.12 $\times$ 0.0952 \\
+167810 & ZeeMassiveCBPt140\_280\_CFilterBVeto	& {\sc Sherpa} & 3.98 $\times$ 1.12 $\times$ 0.369 \\
+167811 & ZeeMassiveCBPt140\_280\_CVetoBVeto	& {\sc Sherpa} & 3.99 $\times$ 1.12 $\times$ 0.534 \\
+167812 & ZmumuMassiveCBPt140\_280\_BFilter	& {\sc Sherpa} & 3.98 $\times$ 1.12 $\times$ 0.0954 \\
+167813 & ZmumuMassiveCBPt140\_280\_CFilterBVeto	& {\sc Sherpa} & 3.99 $\times$ 1.12 $\times$ 0.370 \\
+167814 & ZmumuMassiveCBPt140\_280\_CVetoBVeto	& {\sc Sherpa} & 3.98 $\times$ 1.12 $\times$ 0.534 \\
+167815 & ZtautauMassiveCBPt140\_280\_BFilter	& {\sc Sherpa} & 3.99 $\times$ 1.12 $\times$ 0.0958 \\
+167816 & ZtautauMassiveCBPt140\_280\_CFilterBVeto& {\sc Sherpa} & 3.99 $\times$ 1.12 $\times$ 0.370 \\
+167817 & ZtautauMassiveCBPt140\_280\_CVetoBVeto	& {\sc Sherpa} & 3.99 $\times$ 1.12 $\times$ 0.533 \\
+167821 & ZeeMassiveCBPt280\_500\_BFilter	& {\sc Sherpa} & 0.242 $\times$ 1.12 $\times$ 0.109 \\
+167822 & ZeeMassiveCBPt280\_500\_CFilterBVeto	& {\sc Sherpa} & 0.241 $\times$ 1.12 $\times$ 0.387 \\
+167823 & ZeeMassiveCBPt280\_500\_CVetoBVeto	& {\sc Sherpa} & 0.242 $\times$ 1.12 $\times$ 0.506 \\
+167824 & ZmumuMassiveCBPt280\_500\_BFilter	& {\sc Sherpa} & 0.242 $\times$ 1.12 $\times$ 0.108 \\
+167825 & ZmumuMassiveCBPt280\_500\_CFilterBVeto	& {\sc Sherpa} & 0.242 $\times$ 1.12 $\times$ 0.386 \\
+167826 & ZmumuMassiveCBPt280\_500\_CVetoBVeto	& {\sc Sherpa} & 0.243 $\times$ 1.12 $\times$ 0.505 \\
+167827 & ZtautauMassiveCBPt280\_500\_BFilter	& {\sc Sherpa} & 0.241 $\times$ 1.12 $\times$ 0.107 \\
+167828 & ZtautauMassiveCBPt280\_500\_CFilterBVeto& {\sc Sherpa} & 0.241 $\times$ 1.12 $\times$ 0.385 \\
+167829 & ZtautauMassiveCBPt280\_500\_CVetoBVeto	& {\sc Sherpa} & 0.241 $\times$ 1.12 $\times$ 0.507 \\
+167833 & ZeeMassiveCBPt500\_BFilter		& {\sc Sherpa} & 0.0132 $\times$ 1.12 $\times$ 0.116 \\
+167834 & ZeeMassiveCBPt500\_CFilterBVeto	& {\sc Sherpa} & 0.0135 $\times$ 1.12 $\times$ 0.398 \\
+167835 & ZeeMassiveCBPt500\_CVetoBVeto		& {\sc Sherpa} & 0.0133 $\times$ 1.12 $\times$ 0.485 \\
+167836 & ZmumuMassiveCBPt500\_BFilter		& {\sc Sherpa} & 0.0132 $\times$ 1.12 $\times$ 0.114 \\
+167837 & ZmumuMassiveCBPt500\_CFilterBVeto	& {\sc Sherpa} & 0.0135 $\times$ 1.12 $\times$ 0.399 \\
+167838 & ZmumuMassiveCBPt500\_CVetoBVeto	& {\sc Sherpa} & 0.0133 $\times$ 1.12 $\times$ 0.487 \\
+167839 & ZtautauMassiveCBPt500\_BFilter		& {\sc Sherpa} & 0.0132 $\times$ 1.12 $\times$ 0.115 \\
+167840 & ZtautauMassiveCBPt500\_CFilterBVeto	& {\sc Sherpa} & 0.0133 $\times$ 1.12 $\times$ 0.393 \\
+167841 & ZtautauMassiveCBPt500\_CVetoBVeto	& {\sc Sherpa} & 0.0133 $\times$ 1.12 $\times$ 0.486 \\
+\hline
+\end{tabular}
+%}
+\caption{Summary table of the Monte Carlo samples used in the analysis. $\sigma$ is a cross-section times
+$k$-factor times event filter efficiency, which
+is defined by the event fraction containing heavy-flavor ($b,c$) quarks and hadrons.}
+\label{tab:mcsample_zjet}
+\end{center}
+\end{table}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Z+jets HT filtered
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table}[htb]
+\begin{center}
+%\resizebox{\textwidth}{!}{
+%\begin{tabular}{|c|c|c|c|}
+\begin{tabular}{|p{1.7cm}|p{7.cm}|p{1.7cm}|p{3.8cm}|}
+\hline
+Sample ID 	& Name 					& Generator 		& $\sigma$[pb]\\
+\hline\hline
+204659 & ZeeMassiveCBPt0\_40\_HT500		    & {\sc Sherpa} & 1006 $\times$ 1.12 $\times$ 3.75$\cdot 10^{-4}$ \\
+204660 & ZeeMassiveCBPt40\_70\_HT500		& {\sc Sherpa} & 70.5 $\times$ 1.12 $\times$ 4.36$\cdot 10^{-3}$\\
+204661 & ZeeMassiveCBPt70\_140\_HT500		& {\sc Sherpa} & 29.5 $\times$ 1.12 $\times$ 3.30$\cdot 10^{-2}$ \\
+204662 & ZeeMassiveCBPt140\_280\_HT500	    & {\sc Sherpa} & 4.01 $\times$ 1.12 $\times$ 0.632 \\
+204663 & ZmumuMassiveCBPt0\_40\_HT500	 	& {\sc Sherpa} & 1110 $\times$ 1.12 $\times$ 1.20$\cdot 10^{-3}$ \\
+204664 & ZmumuMassiveCBPt40\_70\_HT500		& {\sc Sherpa} & 70.5 $\times$ 1.12 $\times$ 1.85$\cdot 10^{-3}$ \\
+204665 & ZmumuMassiveCBPt70\_140\_HT500		& {\sc Sherpa} & 29.5 $\times$ 1.12 $\times$ 1.02$\cdot 10^{-2}$ \\
+204666 & ZmumuMassiveCBPt140\_280\_HT500	& {\sc Sherpa} & 3.99 $\times$ 1.12 $\times$ 0.137 \\
+\hline
+\end{tabular}
+%}
+\caption{Summary table of the Monte Carlo samples used in the analysis. $\sigma$ is a cross-section times
+$k$-factor times event filter efficiency, which
+is defined by applying a cut on truth $\HT > 500~\GeV$ to gain statistics in the high-\HT , high-\met\ regions.
+These samples are used by combining them with \pt\ sliced samples defined in Tables~\ref{tab:mcsample_zjet0} and~\ref{tab:mcsample_zjet}, for which only events with truth $\HT < 500~\GeV$ are selected in the $ee$ and $\mu\mu$ channel.}
+%%The definition can be found in {\tt Generators/GeneratorFilters/trunk/src/HeavyFlavorHadronFilter.cxx}.}
+\label{tab:mcsample_HTFilter}
+\end{center}
+\end{table}
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% DY
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table}[htb]
+\begin{center}
+%\resizebox{\textwidth}{!}{
+%\begin{tabular}{|c|c|c|c|}
+\begin{tabular}{|p{1.7cm}|p{5cm}|p{4.5cm}|p{3cm}|}
+\hline
+Sample ID 	& Name 					& Generator 		& $\sigma$ [pb]\\
+\hline\hline
+173041  & DYeeM08to15                 & {\sc Sherpa} & 92.2 \\
+173042  & DYeeM15to40                 & {\sc Sherpa} & 279 \\
+173043  & DYmumuM08to15               & {\sc Sherpa} & 92.1 \\
+173044  & DYmumuM15to40               & {\sc Sherpa} & 279 \\
+173045  & DYtautauM08to15             & {\sc Sherpa} & 92.1 \\
+173046  & DYtautauM15to40             & {\sc Sherpa} & 279 \\
+\hline
+\end{tabular}
+%}
+\caption{Summary table of the Monte Carlo samples used in the analysis. $\sigma$ is a cross-section times $k$-factor.}
+\label{tab:mcsample_dy}
+\end{center}
+\end{table}
+
+
+%\begin{itemize}
+%\item $t\bar{t}$:
+%For \ttbar\ simulation Powheg~\cite{powheg1} connected to Pythia~\cite{pythia} for the parton shower simulation is used.
+
+%\item \dyjets and \wjets: 
+%The ALPGEN~\cite{alpgen} generator connected to Herwig/Jimmy~\cite{herwig} is used for \dyjets and \wjets simulation.
+
+%\item Diboson:
+%Diboson samples are generated using MC@NLO for WW and Herwig~\cite{herwig} for WZ, ZZ.
+
+%\item Single $t$: 
+%Single top samples are generated using Acer~(t-channel) and MC@NLO~(s-channel).
+
+%\item $t\bar{t} + V$: MadGraphPythia
+%\ttbar+V is generated with MadGraph~\cite{Alwall:2007st} for the hard scattering,
+%and Pythia~\cite{pythia} for the parton shower simulation.
+
+%\item QCD: The QCD background is determined from data using a matrix method.
+%\end{itemize}
+
+%All Monte Carlo samples used in this analyses are from the official MC12a
+%Monte Carlo production. These samples use the production tag \texttt{p1328} (CHECK). 
+%The list of simulated background samples used in this analysis, including
+% the cross-sections, filter efficiencies, the generators, and the $k$-factors, 
+% is listed in in COMBINATION INT NOTE. 
+% %Tables~\ref{tab:mcsamples} and ~\ref{tab:mcsamples2}.
+% Note that all cross sections, NLO or NNLO k-factors and
+%  filter efficiencies are obtained from the recommended list provided by
+%  the SUSY group. 
+
+
+%  https://svnweb.cern.ch/trac/atlasoff/browser/PhysicsAnalysis/SUSYPhys/SUSYTools/trunk/
+%  data/susy\_crosssections\_8TeV.txt
+
+%%%%%%%% $t\bar{t}$: PowhegPythia
+
+
+%%%%%%%% \dyjets: AlpgenJimmy
+
+%%%%%%%% \item \wjets: AlpgenJimmy
+
+%%%%%%%% \item Diboson: MCAtNLOJimmy and Herwig
+
+%%%%%%%% \item Single $t$: AcerMCPythia and MCAtNLOJimmy
+
+%%%%%%%% \item $t\bar{t} + V$: MadGraphPythia
+
+%%%%%%%% \item QCD: Matrix method	
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{General gauge mediation signal samples}
+\label{sec:GGM-samples}
+
+For the GGM models the SUSY mass spectra, 
+the gluino branching ratios, and the gluino 
+decay width are calculated using {\sc SUSPECT~2.41}~\cite{Djouadi:2002ze} 
+and {\sc SDECAY~1.3}~\cite{Muhlleitner:2003vg}.
+Table~\ref{tab:mc:par} shows the values of the parameters
+used for the signal MC production. 
+All other sparticle masses are fixed at $\sim$1.5\TeV.
+
+\begin{table}[hbp]
+\centering
+\begin{tabular}{ccccccc}
+\hline
+Parameters
+& $M_{1}$
+& $M_{2}$
+& $\tan\beta$
+& $c\tau_{\text{NLSP}}$
+& $\mu$
+& $\mass{\gluino}$ \\
+\hline
+\hline
+Values     & $\unit[1]{TeV}$ & $\unit[1]{TeV}$ & 1.5 & $<\unit[0.1]{mm}$ & vary & vary \\
+\hline
+Values     & $\unit[1]{TeV}$ & $\unit[1]{TeV}$ & 30  & $<\unit[0.1]{mm}$ & vary & vary \\
+\hline
+\end{tabular}
+\caption{Parameters of the GGM models used for the signal production. The constraint $c\tau_{\text{NLSP}}<\unit[0.1]{mm}$ is fulfilled for all input values 
+     of $\mu > 120$~\gev.}
+\label{tab:mc:par}
+\end{table}
+
+The MC signal samples are generated using 
+{\sc PYTHIA~6.423}~\cite{Sjostrand:2006za} with
+{\sc MRST2007} LO$^{*}$~\cite{Sherstnev:2007nd} 
+parton distribution functions (PDF). All samples
+are listed in Appendix~\ref{sec:GGM_points}.  Signal cross 
+sections are calculated to next-to-leading order (NLO) 
+in the strong coupling constant, adding the resummation 
+of soft gluon emission at next-to-leading-logarithmic 
+accuracy (NLO+NLL)~\cite{Beenakker:1996ch,Kulesza:2008jb,Kulesza:2009kq,Beenakker:2009ha,Beenakker:2011fu}.
+The nominal cross-section and the uncertainty are taken from an envelope
+of cross-section predictions using different PDF sets and factorisation 
+and renormalisation scales, as described in Ref.~\cite{Kramer:2012bx}.
+The GGM signal datasets are listed in Tables~\ref{tab:mcsample_tanbeta15} and~\ref{tab:mcsample_tanbeta30}.
+
+\begin{figure}[hbp]
+\centering
+\includegraphics[width=3in]{Datasets/fig/ggm/SP.eps}
+\caption{The fraction of the \gluino\gluino~ processes as function of
+$\mu$ for GGM grid models characterised by the following parameters:
+$M_{1} = 1\TeV,\ M_{2} = 1\TeV,\ \mass{\gluino} = 900\GeV$,
+$\tan\beta$ = 1.5.}
+\label{fig:sp}
+\end{figure}
+
+The mechanisms for sparticle production in 
+the signal points can be grouped into two 
+categories: strong production (\gluino\gluino), 
+and electroweak production ($\tilde{\chi}^{0}_{1}\tilde{\chi}^{0}_{2}$,
+$\tilde{\chi}^{\pm}_{1}\tilde{\chi}^{\mp}_{1}$, $\tilde{\chi}^{0}_{1}\tilde{\chi}^{\pm}_{1}$,
+$\tilde{\chi}^{0}_{2}\tilde{\chi}^{\pm}_{1}$). The contribution from 
+strong production as function of $\mu$ is presented in Figure~\ref{fig:sp} for
+GGM grid models characterised by the following parameters:
+$M_{1} = 1\TeV,\ M_{2} = 1\TeV,\ \mass{\gluino} = 900\GeV$, $\tan\beta$ = 1.5.
+All processes are considered for NLO and NNL calculations.
+ 
+To select events with at least one $Z$ boson that decays to a 
+pair of electrons, muons, or taus, the \texttt{ZtoLeptonFilter}
+is used at generator level. This filter has an efficiency 
+of $18.8 \pm 0.5 \%$ for models with $\tan\beta = 1.5$.
+The filter efficiency for the models with $\tan\beta = 30$ 
+is dependent on $\mu$, because $BR(\neutralino\to h\gravitino)$ increases with
+$\mu$ for these models, reaching a value of 0.39 for $\mu = 790\GeV$, as shown in Figure~\ref{fig:br} (right). 
+The $BR(\neutralino\to h\gravitino)$ 
+and $BR(\neutralino\to Z\gravitino)$ for $\tan\beta = 1.5$ 
+is also presented at Figure~\ref{fig:br} (left).
+Tables~\ref{tab:cs1},~\ref{tab:cs1_1},~\ref{tab:cs2}, and ~\ref{tab:cs3}
+present $\mu$, masses of $\tilde{\chi}^{0}_{1}$, $\tilde{\chi}^{0}_{2}$,
+$\tilde{\chi}^{\pm}_{1}$, the NLO+NLL cross-section, the filter efficiency,
+and the effective NLO+NLL cross-section for each generated GGM point.
+Table~\ref{tab:mc:cs4} presents the NLO+NLL cross-section for
+$\gluino\gluino$ production as a function of $\mass{\gluino}$.
+$\gluino\gluino$ production is expected to have no dependence on $\mu$.
+\begin{figure}[hbp]
+\centering
+\thesubfigure{\includegraphics[width=3in]{Datasets/fig/ggm/BR15.eps}}
+\thesubfigure{\includegraphics[width=3in]{Datasets/fig/ggm/BR.eps}}
+\caption{The branching fraction for $\neutralino\to h\gravitino$ and
+$\neutralino\to Z\gravitino$ processes as function of 
+$\mu$ for GGM grid models characterised by the following parameters:
+$M_{1} = 1\TeV,\ M_{2} = 1\TeV,\ \mass{\gluino} = 800\GeV$,
+$\tan\beta = 1.5$ (left), $\tan\beta = 30$ (right).}
+\label{fig:br}
+\end{figure}
+
+
+\begin{table}[hbp] 
+\centering
+\begin{tabular}{cc} 
+\hline  
+$\mass{\gluino} \ [GeV]$ & 
+(NLO+NLL) $\sigma(\gluino \gluino) \ [pb]$ \\
+\hline \hline
+400 & 18.2 $\pm$ 2.8 \\
+500 & 4.2 $\pm$ 0.7 \\
+600 & 1.2 $\pm$ 0.2 \\
+700 & 0.37 $\pm$ 0.08 \\
+800 & 0.13$\pm$0.03 \\
+900 & 0.046$\pm$0.014 \\
+1000 & 0.017$\pm$0.006 \\
+\hline
+\end{tabular}
+\caption{The NLO+NLL cross-sections for \gluino\gluino \ production only.}
+\label{tab:mc:cs4}
+\end{table}
+
+%In total, XXX GGM signal samples were generated. 
+As an example of GGM signal samples generated, 
+the full SUSY particle mass spectrum for the model with $\tan\beta=1.5$, 
+$\mass{\gluino} = 700\GeV$ and $\mu = 200\GeV$
+is listed in Table~\ref{tab:mc:sp}.
+
+\begin{table}[hbp]
+\centering
+\begin{tabular}{lcc}
+\hline
+Names & Mass Eigenstates & m $[\GeV]$ \\
+\hline \hline
+\multirow{12}{*}{squarks}
+& $\tilde{u}_{L}$ & \multirow{12}{*}{$\approx$ 1500}  \\
+& $\tilde{u}_{R}$ &  \\
+& $\tilde{d}_{L}$ &  \\
+& $\tilde{d}_{R}$ & \\
+& $\tilde{s}_{L}$ & \\
+& $\tilde{s}_{R}$ & \\
+& $\tilde{c}_{L}$ & \\
+& $\tilde{c}_{R}$ &  \\
+& $\tilde{t}_{1}$ &   \\
+& $\tilde{t}_{2}$ &   \\
+& $\tilde{b}_{1}$ &   \\
+& $\tilde{b}_{2}$ &   \\
+\hline
+\multirow{6}{*}{sleptons}
+& $\tilde{e}_{L}$       &  \multirow{6}{*}{$\approx$ 1500}\\
+& $\tilde{e}_{R}$       &  \\
+& $\tilde{\mu}_{L}$     &  \\
+& $\tilde{\mu}_{R}$     &  \\
+& $\tilde{\tau}_{1}$    &  \\
+& $\tilde{\tau}_{2}$    &  \\
+\hline
+\hline
+\multirow{4}{*}{neutralinos}   
+& $\tilde{\chi}^{0}_{1}$     &  190.1   \\
+& $\tilde{\chi}^{0}_{2}$     &  200.3  \\
+& $\tilde{\chi}^{0}_{3}$     &  1000.0  \\
+& $\tilde{\chi}^{0}_{4}$     &  1010.2  \\
+\hline
+\multirow{2}{*}{charginos}
+& $\tilde{\chi}^{\pm}_{1}$      & 192.6   \\
+& $\tilde{\chi}^{\pm}_{2}$      & 1007.8  \\
+\hline
+\multirow{4}{*}{Higgs bosons}
+& $\tilde{h}^{0}$            & 126.0  \\
+& $\tilde{H}^{0}$            & 2004.0   \\
+& $\tilde{A}^{0}$            & 2000.0   \\
+& $\tilde{H}^{\pm}$       & 2002.1   \\
+\hline
+\end{tabular}
+\caption{SUSY particle mass spectrum for the higgsino-like NLSP GGM model
+which is characterised by the following parameters:
+$M_{1} = 1\TeV,\ M_{2} = 1\TeV,\  \tan\beta = 1.5,\ 
+c\tau_\text{NLSP} < 0.1~\text{mm},\
+\mu= 200\GeV,\ \mass{\gluino} = 700\GeV$.}
+\label{tab:mc:sp}
+\end{table}
+
+%%%%%%%%%%% tan beta 1.5 %%%%%%%%%%%%
+\begin{table}[htb]
+\begin{center}
+\scriptsize
+%\resizebox{\textwidth}{!}{
+%\begin{tabular}{|c|c|c|c|}
+\begin{tabular}{|p{1.7cm}|p{7cm}|p{2.5cm}|}
+\hline
+Sample ID 	& Name 					& Generator \\
+\hline\hline
+ 142585  &  GGMHiggsinoNLSP\_800\_120\_Zll  &  {\sc Pythia} \\ 
+ 142586  &  GGMHiggsinoNLSP\_800\_150\_Zll  &  {\sc Pythia} \\ 
+ 142587  &  GGMHiggsinoNLSP\_800\_200\_Zll  &  {\sc Pythia} \\ 
+ 142588  &  GGMHiggsinoNLSP\_800\_300\_Zll  &  {\sc Pythia} \\ 
+ 142589  &  GGMHiggsinoNLSP\_800\_400\_Zll  &  {\sc Pythia} \\ 
+ 142590  &  GGMHiggsinoNLSP\_800\_500\_Zll  &  {\sc Pythia} \\ 
+ 142591  &  GGMHiggsinoNLSP\_800\_600\_Zll  &  {\sc Pythia} \\ 
+ 142592  &  GGMHiggsinoNLSP\_800\_700\_Zll  &  {\sc Pythia} \\ 
+ 142593  &  GGMHiggsinoNLSP\_800\_790\_Zll  &  {\sc Pythia} \\ 
+ 142594  &  GGMHiggsinoNLSP\_900\_120\_Zll  &  {\sc Pythia} \\ 
+ 142595  &  GGMHiggsinoNLSP\_900\_150\_Zll  &  {\sc Pythia} \\ 
+ 142596  &  GGMHiggsinoNLSP\_900\_200\_Zll  &  {\sc Pythia} \\ 
+ 142597  &  GGMHiggsinoNLSP\_900\_300\_Zll  &  {\sc Pythia} \\ 
+ 142598  &  GGMHiggsinoNLSP\_900\_400\_Zll  &  {\sc Pythia} \\ 
+ 142599  &  GGMHiggsinoNLSP\_900\_500\_Zll  &  {\sc Pythia} \\ 
+ 142599  &  GGMHiggsinoNLSP\_900\_500\_Zll  &  {\sc Pythia} \\
+ 142600  &  GGMHiggsinoNLSP\_900\_600\_Zll  &  {\sc Pythia} \\ 
+ 142601  &  GGMHiggsinoNLSP\_900\_700\_Zll  &  {\sc Pythia} \\ 
+ 142602  &  GGMHiggsinoNLSP\_900\_800\_Zll  &  {\sc Pythia} \\ 
+ 142603  &  GGMHiggsinoNLSP\_900\_890\_Zll  &  {\sc Pythia} \\ 
+ 164424  &  GGMHiggsinoNLSP\_1000\_120\_Zll  &  {\sc Pythia} \\ 
+ 164425  &  GGMHiggsinoNLSP\_1000\_150\_Zll  &  {\sc Pythia} \\ 
+ 164426  &  GGMHiggsinoNLSP\_1000\_200\_Zll  &  {\sc Pythia} \\ 
+ 164427  &  GGMHiggsinoNLSP\_1000\_300\_Zll  &  {\sc Pythia} \\ 
+ 164428  &  GGMHiggsinoNLSP\_1000\_400\_Zll  &  {\sc Pythia} \\ 
+ 164429  &  GGMHiggsinoNLSP\_1000\_500\_Zll  &  {\sc Pythia} \\ 
+ 164430  &  GGMHiggsinoNLSP\_1000\_600\_Zll  &  {\sc Pythia} \\ 
+ 164431  &  GGMHiggsinoNLSP\_1000\_700\_Zll  &  {\sc Pythia} \\ 
+ 164432  &  GGMHiggsinoNLSP\_1000\_800\_Zll  &  {\sc Pythia} \\ 
+ 164433  &  GGMHiggsinoNLSP\_1000\_900\_Zll  &  {\sc Pythia} \\ 
+ 164434  &  GGMHiggsinoNLSP\_1000\_990\_Zll  &  {\sc Pythia} \\ 
+ 164897  &  GGMHiggsinoNLSP\_600\_120\_Zll  &  {\sc Pythia} \\ 
+ 164898  &  GGMHiggsinoNLSP\_600\_150\_Zll  &  {\sc Pythia} \\ 
+ 164899  &  GGMHiggsinoNLSP\_600\_200\_Zll  &  {\sc Pythia} \\ 
+ 164900  &  GGMHiggsinoNLSP\_600\_300\_Zll  &  {\sc Pythia} \\ 
+ 164901  &  GGMHiggsinoNLSP\_600\_400\_Zll  &  {\sc Pythia} \\ 
+ 164902  &  GGMHiggsinoNLSP\_600\_500\_Zll  &  {\sc Pythia} \\ 
+ 164903  &  GGMHiggsinoNLSP\_600\_590\_Zll  &  {\sc Pythia} \\ 
+ 164904  &  GGMHiggsinoNLSP\_700\_120\_Zll  &  {\sc Pythia} \\ 
+ 164905  &  GGMHiggsinoNLSP\_700\_150\_Zll  &  {\sc Pythia} \\ 
+ 164906  &  GGMHiggsinoNLSP\_700\_200\_Zll  &  {\sc Pythia} \\ 
+ 164907  &  GGMHiggsinoNLSP\_700\_300\_Zll  &  {\sc Pythia} \\ 
+ 164908  &  GGMHiggsinoNLSP\_700\_400\_Zll  &  {\sc Pythia} \\ 
+ 164909  &  GGMHiggsinoNLSP\_700\_500\_Zll  &  {\sc Pythia} \\ 
+ 164910  &  GGMHiggsinoNLSP\_700\_600\_Zll  &  {\sc Pythia} \\ 
+ 164911  &  GGMHiggsinoNLSP\_700\_690\_Zll  &  {\sc Pythia} \\ 
+ 176216  &  GGMHiggsinoNLSP\_1100\_120\_Zll & {\sc Pythia} \\ 
+ 176217  &  GGMHiggsinoNLSP\_1100\_150\_Zll & {\sc Pythia} \\ 
+ 176218  &  GGMHiggsinoNLSP\_1100\_200\_Zll & {\sc Pythia} \\ 
+ 176219  &  GGMHiggsinoNLSP\_1100\_300\_Zll & {\sc Pythia} \\ 
+ 176220  &  GGMHiggsinoNLSP\_1100\_400\_Zll & {\sc Pythia} \\ 
+ 176221  &  GGMHiggsinoNLSP\_1100\_500\_Zll & {\sc Pythia} \\ 
+ 176222  &  GGMHiggsinoNLSP\_1100\_600\_Zll & {\sc Pythia} \\ 
+ 176223  &  GGMHiggsinoNLSP\_1100\_700\_Zll & {\sc Pythia} \\ 
+ 176224  &  GGMHiggsinoNLSP\_1100\_800\_Zll & {\sc Pythia} \\ 
+ 176225  &  GGMHiggsinoNLSP\_1100\_900\_Zll & {\sc Pythia} \\ 
+ 176226  &  GGMHiggsinoNLSP\_1100\_1000\_Zll & {\sc Pythia} \\ 
+ 176227  &  GGMHiggsinoNLSP\_1100\_1090\_Zll & {\sc Pythia} \\ 
+ 176228  &  GGMHiggsinoNLSP\_1200\_120\_Zll & {\sc Pythia} \\ 
+ 176229  &  GGMHiggsinoNLSP\_1200\_150\_Zll & {\sc Pythia} \\ 
+ 176230  &  GGMHiggsinoNLSP\_1200\_200\_Zll & {\sc Pythia} \\ 
+ 176231  &  GGMHiggsinoNLSP\_1200\_300\_Zll & {\sc Pythia} \\ 
+ 176232  &  GGMHiggsinoNLSP\_1200\_400\_Zll & {\sc Pythia} \\ 
+ 176233  &  GGMHiggsinoNLSP\_1200\_500\_Zll & {\sc Pythia} \\ 
+ 176234  &  GGMHiggsinoNLSP\_1200\_600\_Zll & {\sc Pythia} \\ 
+ 176235  &  GGMHiggsinoNLSP\_1200\_700\_Zll & {\sc Pythia} \\ 
+ 176236  &  GGMHiggsinoNLSP\_1200\_800\_Zll & {\sc Pythia} \\ 
+ 176237  &  GGMHiggsinoNLSP\_1200\_900\_Zll & {\sc Pythia} \\ 
+ 176238  &  GGMHiggsinoNLSP\_1200\_1000\_Zll & {\sc Pythia} \\ 
+ 176239  &  GGMHiggsinoNLSP\_1200\_1100\_Zll & {\sc Pythia} \\ 
+ 176240  &  GGMHiggsinoNLSP\_1200\_1190\_Zll & {\sc Pythia} \\ 
+\hline
+\end{tabular}
+\caption{Summary table of the GGM Monte Carlo samples used in the analysis with $\tan{\beta}=1.5$.}
+\label{tab:mcsample_tanbeta15}
+\end{center}
+\end{table}
+%%%%%%%%%%% tan beta 3.0 %%%%%%%%%%%%
+\begin{table}[htb]
+\begin{center}
+\tiny
+%\resizebox{\textwidth}{!}{
+%\begin{tabular}{|c|c|c|c|}
+\begin{tabular}{|p{1.7cm}|p{7cm}|p{2.5cm}|}
+%\begin{longtable}{|p{1.7cm}|p{7cm}|p{2.5cm}|}
+\hline
+Sample ID 	& Name 					& Generator\\
+\hline\hline
+ 176241  &  GGMHiggsinoNLSP\_1100\_120\_30\_Zll & {\sc Pythia} \\ 
+ 176242  &  GGMHiggsinoNLSP\_1100\_150\_30\_Zll & {\sc Pythia} \\ 
+ 176243  &  GGMHiggsinoNLSP\_1100\_200\_30\_Zll & {\sc Pythia} \\ 
+ 176244  &  GGMHiggsinoNLSP\_1100\_300\_30\_Zll & {\sc Pythia} \\ 
+ 176245  &  GGMHiggsinoNLSP\_1100\_400\_30\_Zll & {\sc Pythia} \\ 
+ 176246  &  GGMHiggsinoNLSP\_1100\_500\_30\_Zll & {\sc Pythia} \\ 
+ 176247  &  GGMHiggsinoNLSP\_1100\_600\_30\_Zll & {\sc Pythia} \\ 
+ 176248  &  GGMHiggsinoNLSP\_1100\_700\_30\_Zll & {\sc Pythia} \\ 
+ 176249  &  GGMHiggsinoNLSP\_1100\_800\_30\_Zll & {\sc Pythia} \\ 
+ 176250  &  GGMHiggsinoNLSP\_1100\_900\_30\_Zll & {\sc Pythia} \\ 
+ 176251  &  GGMHiggsinoNLSP\_1100\_1000\_30\_Zll & {\sc Pythia} \\ 
+ 176252  &  GGMHiggsinoNLSP\_1100\_1090\_30\_Zll & {\sc Pythia} \\ 
+ 176253  &  GGMHiggsinoNLSP\_1200\_120\_30\_Zll & {\sc Pythia} \\ 
+ 176254  &  GGMHiggsinoNLSP\_1200\_150\_30\_Zll & {\sc Pythia} \\ 
+ 176255  &  GGMHiggsinoNLSP\_1200\_200\_30\_Zll & {\sc Pythia} \\ 
+ 176256  &  GGMHiggsinoNLSP\_1200\_300\_30\_Zll & {\sc Pythia} \\ 
+ 176257  &  GGMHiggsinoNLSP\_1200\_400\_30\_Zll & {\sc Pythia} \\ 
+ 176258  &  GGMHiggsinoNLSP\_1200\_500\_30\_Zll & {\sc Pythia} \\ 
+ 176259  &  GGMHiggsinoNLSP\_1200\_600\_30\_Zll & {\sc Pythia} \\ 
+ 176260  &  GGMHiggsinoNLSP\_1200\_700\_30\_Zll & {\sc Pythia} \\ 
+ 176261  &  GGMHiggsinoNLSP\_1200\_800\_30\_Zll & {\sc Pythia} \\ 
+ 176262  &  GGMHiggsinoNLSP\_1200\_900\_30\_Zll & {\sc Pythia} \\ 
+ 176263  &  GGMHiggsinoNLSP\_1200\_1000\_30\_Zll & {\sc Pythia} \\ 
+ 176264  &  GGMHiggsinoNLSP\_1200\_1100\_30\_Zll & {\sc Pythia} \\ 
+ 176265  &  GGMHiggsinoNLSP\_1200\_1190\_30\_Zll & {\sc Pythia} \\ 
+ 157572  &  GGMHiggsinoNLSP\_400\_120\_30\_Zll  &  {\sc Pythia}  \\  
+ 157573  &  GGMHiggsinoNLSP\_400\_150\_30\_Zll  &  {\sc Pythia}  \\  
+ 157574  &  GGMHiggsinoNLSP\_400\_200\_30\_Zll  &  {\sc Pythia}  \\  
+ 157575  &  GGMHiggsinoNLSP\_400\_300\_30\_Zll  &  {\sc Pythia}  \\  
+ 157576  &  GGMHiggsinoNLSP\_400\_390\_30\_Zll  &  {\sc Pythia}  \\  
+ 157577  &  GGMHiggsinoNLSP\_500\_120\_30\_Zll  &  {\sc Pythia}  \\  
+ 157578  &  GGMHiggsinoNLSP\_500\_150\_30\_Zll  &  {\sc Pythia}  \\  
+ 157579  &  GGMHiggsinoNLSP\_500\_200\_30\_Zll  &  {\sc Pythia}  \\  
+ 157580  &  GGMHiggsinoNLSP\_500\_300\_30\_Zll  &  {\sc Pythia}  \\  
+ 157581  &  GGMHiggsinoNLSP\_500\_400\_30\_Zll  &  {\sc Pythia}  \\  
+ 157582  &  GGMHiggsinoNLSP\_500\_490\_30\_Zll  &  {\sc Pythia}  \\  
+ 157583  &  GGMHiggsinoNLSP\_600\_120\_30\_Zll  &  {\sc Pythia}  \\  
+ 157584  &  GGMHiggsinoNLSP\_600\_150\_30\_Zll  &  {\sc Pythia}  \\  
+ 157585  &  GGMHiggsinoNLSP\_600\_200\_30\_Zll  &  {\sc Pythia}  \\  
+ 157586  &  GGMHiggsinoNLSP\_600\_300\_30\_Zll  &  {\sc Pythia}  \\  
+ 157587  &  GGMHiggsinoNLSP\_600\_400\_30\_Zll  &  {\sc Pythia}  \\  
+ 157588  &  GGMHiggsinoNLSP\_600\_500\_30\_Zll  &  {\sc Pythia}  \\  
+ 157589  &  GGMHiggsinoNLSP\_600\_590\_30\_Zll  &  {\sc Pythia}  \\  
+ 157590  &  GGMHiggsinoNLSP\_700\_120\_30\_Zll  &  {\sc Pythia}  \\  
+ 157591  &  GGMHiggsinoNLSP\_700\_150\_30\_Zll  &  {\sc Pythia}  \\  
+ 157592  &  GGMHiggsinoNLSP\_700\_200\_30\_Zll  &  {\sc Pythia}  \\  
+ 157593  &  GGMHiggsinoNLSP\_700\_300\_30\_Zll  &  {\sc Pythia}  \\  
+ 157594  &  GGMHiggsinoNLSP\_700\_400\_30\_Zll  &  {\sc Pythia}  \\  
+ 157595  &  GGMHiggsinoNLSP\_700\_500\_30\_Zll  &  {\sc Pythia}  \\  
+ 157596  &  GGMHiggsinoNLSP\_700\_600\_30\_Zll  &  {\sc Pythia}  \\  
+ 157597  &  GGMHiggsinoNLSP\_700\_690\_30\_Zll  &  {\sc Pythia}  \\  
+ 157598  &  GGMHiggsinoNLSP\_800\_120\_30\_Zll  &  {\sc Pythia}  \\  
+ 157599  &  GGMHiggsinoNLSP\_800\_150\_30\_Zll  &  {\sc Pythia}  \\  
+ 157600  &  GGMHiggsinoNLSP\_800\_200\_30\_Zll  &  {\sc Pythia}  \\  
+ 157601  &  GGMHiggsinoNLSP\_800\_300\_30\_Zll  &  {\sc Pythia}  \\  
+ 157602  &  GGMHiggsinoNLSP\_800\_400\_30\_Zll  &  {\sc Pythia}  \\  
+ 157603  &  GGMHiggsinoNLSP\_800\_500\_30\_Zll  &  {\sc Pythia}  \\  
+ 157604  &  GGMHiggsinoNLSP\_800\_600\_30\_Zll  &  {\sc Pythia}  \\  
+ 157605  &  GGMHiggsinoNLSP\_800\_700\_30\_Zll  &  {\sc Pythia}  \\  
+ 157606  &  GGMHiggsinoNLSP\_800\_790\_30\_Zll  &  {\sc Pythia}  \\  
+ 157607  &  GGMHiggsinoNLSP\_900\_120\_30\_Zll  &  {\sc Pythia}  \\  
+ 157608  &  GGMHiggsinoNLSP\_900\_150\_30\_Zll  &  {\sc Pythia}  \\  
+ 157609  &  GGMHiggsinoNLSP\_900\_200\_30\_Zll  &  {\sc Pythia}  \\  
+ 157610  &  GGMHiggsinoNLSP\_900\_300\_30\_Zll  &  {\sc Pythia}  \\  
+ 157611  &  GGMHiggsinoNLSP\_900\_400\_30\_Zll  &  {\sc Pythia}  \\  
+ 157612  &  GGMHiggsinoNLSP\_900\_500\_30\_Zll  &  {\sc Pythia}  \\  
+ 157613  &  GGMHiggsinoNLSP\_900\_600\_30\_Zll  &  {\sc Pythia}  \\  
+ 157614  &  GGMHiggsinoNLSP\_900\_700\_30\_Zll  &  {\sc Pythia}  \\  
+ 157615  &  GGMHiggsinoNLSP\_900\_800\_30\_Zll  &  {\sc Pythia}  \\  
+ 157616  &  GGMHiggsinoNLSP\_900\_890\_30\_Zll  &  {\sc Pythia}  \\  
+ 157617  &  GGMHiggsinoNLSP\_1000\_120\_30\_Zll  &  {\sc Pythia}  \\  
+ 157618  &  GGMHiggsinoNLSP\_1000\_150\_30\_Zll  &  {\sc Pythia}  \\  
+ 157619  &  GGMHiggsinoNLSP\_1000\_200\_30\_Zll  &  {\sc Pythia}  \\  
+ 157620  &  GGMHiggsinoNLSP\_1000\_300\_30\_Zll  &  {\sc Pythia}  \\  
+ 157621  &  GGMHiggsinoNLSP\_1000\_400\_30\_Zll  &  {\sc Pythia}  \\  
+ 157622  &  GGMHiggsinoNLSP\_1000\_500\_30\_Zll  &  {\sc Pythia}  \\  
+ 157623  &  GGMHiggsinoNLSP\_1000\_600\_30\_Zll  &  {\sc Pythia}  \\  
+ 157624  &  GGMHiggsinoNLSP\_1000\_700\_30\_Zll  &  {\sc Pythia}  \\  
+ 157625  &  GGMHiggsinoNLSP\_1000\_800\_30\_Zll  &  {\sc Pythia}  \\  
+ 157626  &  GGMHiggsinoNLSP\_1000\_900\_30\_Zll  &  {\sc Pythia}  \\  
+ 157627  &  GGMHiggsinoNLSP\_1000\_990\_30\_Zll  &  {\sc Pythia}  \\  
+\hline
+\end{tabular}
+\caption{Summary table of the GGM Monte Carlo samples used in the analysis with $\tan{\beta}=30$.}
+\label{tab:mcsample_tanbeta30}
+%\end{longtable}
+\end{center}
+\end{table}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\subsection{Bilinear RPV signal samples}
+%\label{sec:bRPV-samples}
+%An overview of the phenomenological aspects and determination of model
+%parameters has been given in Ref.~\cite{atlas1leplpsupport}.
+%Note that previous bRPV signal grids are described in detail 
+%in Ref.~\cite{atlas1leplpsupport} and ~\cite{atlasmultijets7TeV}. 
+%In summary, bRPV signal points are based on mSUGRA input parameters 
+%supplemented by bilinear RPV parameters. The latter 
+%are determined by the spectrum generator SPheno~\cite{Porod:2003um, Porod:2011nf} 
+%to be consistent with neutrino oscillation results. The mSUGRA parameters in
+%this analysis are defined as follows:
+%\begin{compactitem} %{itemize}[noitemsep]
+%\item $400\GeV \leq m\_0 \leq 2200\GeV$
+%\item $250\GeV \leq m\_{1/2} \leq 800\GeV$
+%\item $A\_0=-2 m\_0$
+%\item $\tan\beta=30$
+%\item ${\rm sgn}(\mu)=+1$
+%\end{compactitem}
+%The main motivation for these mSUGRA parameters is the consistency with a
+% Higgs particle of mass around 125~GeV. An overview of Higgs masses 
+% for all bRPV signal points is shown in Figure~\ref{fig:bRPV-Higgs-mass}.
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{figure}[htbp]
+%\begin{center}
+%\includegraphics[width=0.55\textwidth]{Datasets/fig/bRPV/HiggsAwareGrid\_HiggsMasses.eps}
+%%\includegraphics[width=0.84\textwidth]{Datasets/fig/bRPV/higgs\_mass\_2D-117.eps}
+%\caption{Higgs mass in $\GeV$ for all bRPV signal points considered.}
+%\label{fig:bRPV-Higgs-mass}
+%\end{center}
+%\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%\begin{figure}[hbp]
+%\centering
+%%\thesubfigure{\includegraphics[width=0.49\linewidth]{Datasets/fig/bRPV/Total\_xsec\_higgsAwareGrid.eps}}\hfill
+%%%%\thesubfigure{\includegraphics[width=0.49\linewidth]{Datasets/fig/bRPV/Total\_errors\_higgsAwareGrid.eps}}
+%%\thesubfigure{\includegraphics[width=0.49\linewidth]{Datasets/fig/bRPV/Relative\_errors.eps}}
+%{\includegraphics[width=0.45\linewidth]{Datasets/fig/bRPV/Total\_xsec\_higgsAwareGrid.eps}}
+%\hfill
+%{\includegraphics[width=0.5\linewidth]{Datasets/fig/bRPV/Relative\_errors.eps}}
+%\caption{Total cross-sections at NLO (NLO+NLL) and relative uncertainties for
+%bRPV signal points.}
+%\label{fig:bRPV\_total\_xsec\_errors}
+%\end{figure} 
+% 
+%The parameter space for $m\_0$ is extended significantly with
+%respect to the previous analysis in Ref.~\cite{atlasmultijets7TeV}, 
+%where input masses in the ranges 160\,\GeV\ $\leq m\_0 \leq$ 1400\,\GeV\
+%have been taken into account. The bRPV signal grid points have been produced
+%in full simulation with 20~k events per point. As in the previous analysis of 
+%bRPV signal models, the total cross-sections are mainly dependent on the gaugino
+%mass parameter $m\_{1/2}$ setting the scale for the dominant gluino, chargino
+%or neutralino production modes. The corresponding total cross-sections and their
+%relative uncertainties are shown in Figure~\ref{fig:bRPV\_total\_xsec\_errors}.
+%An overview of bRPV SUSY
+%production processes is given in Appendix~\ref{sec:SUSY\_prod} and corresponding
+%decays are displayed in Appendix~\ref{sec:bRPV\_decays}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\subsection{Simplified two-step $WWZZ$ signal samples}
+%\label{sec:WWZZ-samples}
+%This model and the signal samples generated is described in~\cite{COMB\_INT}.
+
+
