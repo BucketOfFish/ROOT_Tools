@@ -1,4 +1,4 @@
-void quickDraw() {
+void data_mc_ratio_plot() {
 
     ///////////////////////////////////////////////////
     // Set up canvas - pad1 for plot, pad2 for ratio //
@@ -76,7 +76,6 @@ void quickDraw() {
 
     float ratioUpper = 2;
     float ratioLower = 0.5;
-    float topFrac = 0.3;
 
     TH1D* h_em_ratio = stack->GetStack()->Last()->Clone("h_em_ratio");
 	h_em_ratio->Sumw2(); // make error bars correct
@@ -88,8 +87,8 @@ void quickDraw() {
 	h_em_ratio->Draw("e1");
 	h_em_ratio->SetTitle("");
 	h_em_ratio->GetYaxis()->SetNdivisions(3);
-    h_em_ratio->GetYaxis()->SetLabelSize( h_em_ratio->GetYaxis()->GetLabelSize() * .8 / (1 - topFrac) );
-    h_em_ratio->GetXaxis()->SetLabelSize( h_em_ratio->GetXaxis()->GetLabelSize() * topFrac / (1 - topFrac) );
+    h_em_ratio->GetYaxis()->SetLabelSize(0.1);
+    h_em_ratio->GetXaxis()->SetLabelSize(0.1);
 
 	TLine* t = new TLine(h_em_ratio->GetXaxis()->GetXmin(), 1, h_em_ratio->GetXaxis()->GetXmax(), 1);
 	t->SetLineStyle(7);
