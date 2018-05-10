@@ -36,16 +36,16 @@ void data_mc_ratio_plot() {
 
 	TCut weight_z = "totalWeight*36.1*1000";
 
+	tree_data->Draw("MET>>h_data(20,0,400)",mycut); // this is the cut applied to the data, no need for weighting 
+	tree_tt->Draw("MET>>h_tt(20,0,400)",mycut*weight_z); // weight for ttbar and VV, change this to h_data, tree_data for GMC closure
+	tree_vv->Draw("MET>>h_vv(20,0,400)",mycut*weight_z);
+
     //////////////////////
     // Draw MC and Data //
     //////////////////////
 
     pad1->Draw(); // draw the upper pad: pad1
     pad1->cd(); // pad1 becomes the current pad
-
-	tree_data->Draw("MET>>h_data(20,0,400)",mycut); // this is the cut applied to the data, no need for weighting 
-	tree_tt->Draw("MET>>h_tt(20,0,400)",mycut*weight_z); // weight for ttbar and VV, change this to h_data, tree_data for GMC closure
-	tree_vv->Draw("MET>>h_vv(20,0,400)",mycut*weight_z);
 
 	THStack *stack = new THStack("stack","em-data");
 	h_tt->SetFillColor(kAzure+1);
