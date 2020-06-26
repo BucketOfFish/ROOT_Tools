@@ -1,21 +1,19 @@
 #include "/home/matt/Projects/PhotonMethod/Main/Settings.cpp"
 
+TCut getDPhiCR(string region) {
+    return NMinus1Cut(cuts::selections[region], "minDPhi2JetsMet") + cuts::minDPhi2JetsMet_anti0p4;
+}
+
 void PMG_table() {
     // Options
     TChain chain("Zjets_NoSys");
-    chain.Add("/public/data/SUSY_Systematics/Skimmed/Zjets/mc16a_Zjets_merged_processed.root");
-    chain.Add("/public/data/SUSY_Systematics/Skimmed/Zjets/mc16cd_Zjets_merged_processed.root");
-    chain.Add("/public/data/SUSY_Systematics/Skimmed/Zjets/mc16e_Zjets_merged_processed.root");
+    chain.Add("/public/data/SUSY_Systematics/Skimmed/StrongPreselectionInclusive/mc16a_Zjets_merged_processed.root");
+    chain.Add("/public/data/SUSY_Systematics/Skimmed/StrongPreselectionInclusive/mc16cd_Zjets_merged_processed.root");
+    chain.Add("/public/data/SUSY_Systematics/Skimmed/StrongPreselectionInclusive/mc16e_Zjets_merged_processed.root");
 
-    double binC[8] = {12,31,46,61,71,81,101,201};
-    double binLow[10] = {12,41,61,81,101,141,201,301,401,501};
-    double binMed[6] = {12,81,101,201,301,601};
-    double binHigh[4] = {12,101,301,1001};
-    double binVR3L[6] = {12,81,101,201,301,601};
-
-    vector<string> region_names = {"SRC", "SRLow", "SRMed", "SRHigh", "SRLowZ", "SRMedZ", "SRHighZ",
-                                   //"CRC", "CRLow", "CRMed", "CRHigh", "CRLowZ", "CRMedZ", "CRHighZ", 
-                                   "VRC", "VRLow", "VRMed", "VRHigh", "VRLowZ", "VRMedZ", "VRHighZ"}; 
+    vector<string> regions = {"SRC", "SRLow", "SRMed", "SRHigh", "SRLowZ", "SRMedZ", "SRHighZ",
+                              //"CRC", "CRLow", "CRMed", "CRHigh", "CRLowZ", "CRMedZ", "CRHighZ", 
+                              "VRC", "VRLow", "VRMed", "VRHigh", "VRLowZ", "VRMedZ", "VRHighZ"}; 
 
     TCut lumi = "(RandomRunNumber<320000 ? 36200 : (RandomRunNumber>320000 && RandomRunNumber<348000) ? 44300 : 58500)";
     TCut MC_weight = "genWeight*eventWeight*leptonWeight*jvtWeight*bTagWeight*pileupWeight*globalDiLepTrigSF";
@@ -24,11 +22,6 @@ void PMG_table() {
     //systematics = {"ttbar_scale", "ttbar_PDF"};
 
     // Table Production
-    vector<pair <TString, TCut>> regions;
-    for (auto region_name : region_names) {
-        regions.push_back(make_pair(region_name.c_str(), cuts::selections[region_name]));
-    }
-
     for (auto systematic : systematics) {
         vector<string> LHE3Weights;
         if (systematic == "scale") {
@@ -66,70 +59,32 @@ void PMG_table() {
         }
 
         for (auto region : regions) {
-            TCut cut_reg = region.second;
-            //cout << "Printing Systematics for Region " << region.first << ": " << cut_reg << endl;
-            cout << "Printing Systematics for Region " << region.first << endl;
+            TCut SR_cut = cuts::selections[region];
+            TCut CR_cut = getDPhiCR(region);
+            cout << "Finding Systematics for Region " << region << endl;
 
-            vector<TH1F*> hists, hists_err;	
-
-            int binSize = 0;
-
-            if (region.first.Index("RC") != -1) binSize = sizeof(binC)/sizeof(binC[0])-1;
-            else if (region.first.Index("Low") != -1) binSize = sizeof(binLow)/sizeof(binLow[0])-1;
-            else if (region.first.Index("Med") != -1) binSize = sizeof(binMed)/sizeof(binMed[0])-1;
-            else if (region.first.Index("High") != -1) binSize = sizeof(binHigh)/sizeof(binHigh[0])-1;
-
+            vector<float> ratios;
             for (auto LHE3Weight : LHE3Weights) {
                 cout << "Working on Weight " << LHE3Weight << endl;
-
-                TString hist_name = ("hists_" + LHE3Weight).c_str();
-                if (region.first.Index("RC") != -1) hists.push_back(new TH1F(hist_name,"",binSize,binC));
-                else if (region.first.Index("Low") != -1) hists.push_back(new TH1F(hist_name,"",binSize,binLow));
-                else if (region.first.Index("Med") != -1) hists.push_back(new TH1F(hist_name,"",binSize,binMed));
-                else if (region.first.Index("High") != -1) hists.push_back(new TH1F(hist_name,"",binSize,binHigh));
-
+                TH1F* SR_hist = new TH1F(("hists_" + LHE3Weight + "_SR").c_str(),"",1,0,1);
+                TH1F* CR_hist = new TH1F(("hists_" + LHE3Weight + "_CR").c_str(),"",1,0,1);
                 TCut LHE_branch = ("LHE3Weight_" + LHE3Weight).c_str();
-                chain.Draw(("mll>>hists_" + LHE3Weight).c_str(), cut_reg*lumi*MC_weight*LHE_branch, "goff");
+                chain.Draw(("mll>>hists_" + LHE3Weight + "_SR").c_str(), SR_cut*lumi*MC_weight*LHE_branch, "goff");
+                chain.Draw(("mll>>hists_" + LHE3Weight + "_CR").c_str(), CR_cut*lumi*MC_weight*LHE_branch, "goff");
+                float SR_yield = fabs(SR_hist->Integral(0,2));
+                float CR_yield = fabs(CR_hist->Integral(0,2));
+                ratios.push_back(SR_yield / CR_yield);
+                cout << "SR yield: " << SR_yield << ", CR yield: " << CR_yield << ", ratio: " << ratios.back() << endl;
+                delete SR_hist, CR_hist;
             }
 
-            int hist_i = 0;
-            cout << "Producing Uncertainty Histograms" << endl;
-            for (auto hist : hists) {
-                if (hist_i == 0) {
-                    hist_i++;
-                    continue;
-                }
-                hists_err.push_back((TH1F*)(hist->Clone(("hists_" + LHE3Weights[hist_i++] + "_err").c_str())));
+            float uncertainty_max = 0;
+            for (int i=0; i<ratios.size(); i++) {
+                if (i==0) continue;
+                float uncertainty = abs((ratios[i]-ratios[0]) / ratios[0]);
+                if (uncertainty>uncertainty_max) uncertainty_max = uncertainty;
             }
-
-            cout << "Finding Maximum Uncertainty" << endl;
-            float err_max_all = 0;
-            for (auto hist_err : hists_err) {
-                cout << "Finding Uncertainty for Histogram" << endl;
-                hist_err->Add(hists[0],-1);
-                hist_err->Divide(hists[0]);
-
-                float err_max_single = 0;
-                float err_max_single_sec = 0;
-                for (int i=0; i<hist_err->GetNbinsX()+1; i++) {
-                    cout << "bin " << i << ": " << hist_err->GetBinContent(i+1) << endl;
-                    if (fabs(hist_err->GetBinContent(i+1)) > err_max_single) {
-                        err_max_single_sec = err_max_single;
-                        err_max_single = fabs(hist_err->GetBinContent(i+1));
-                    } else if (fabs(hist_err->GetBinContent(i+1)) > err_max_single_sec) {
-                        err_max_single_sec = fabs(hist_err->GetBinContent(i+1));
-                    }
-                    cout << "err_max_single: " << err_max_single << ", err_max_single_sec: " << err_max_single_sec << endl;
-                }
-                if (err_max_single_sec < err_max_single * .9 && err_max_single_sec > 1e-9)
-                    err_max_single = err_max_single_sec;
-                if (err_max_single > err_max_all)
-                    err_max_all = err_max_single;
-            }
-            cout << "Region " << region.first << " " << systematic << " uncertainty: " << err_max_all << endl;
-
-            for (auto hist : hists) {delete hist;}
-            for (auto hist_err : hists_err) {delete hist_err;}
+            cout << "Region " << region << " " << systematic << " uncertainty: " << uncertainty_max << endl;
         }	
     }
 }
